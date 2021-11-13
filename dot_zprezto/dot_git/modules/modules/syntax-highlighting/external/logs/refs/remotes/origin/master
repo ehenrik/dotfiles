@@ -1,0 +1,2 @@
+5e9b7c4650e4386a4620011c589475baa6263eb1 e7d3fbc50b0209cb9f9b0812fd40298be03c7808 Joakim Olsson <joakim@unbound.se> 1573548865 +0100	fetch --no-prune --no-prune-tags --recurse-submodules-default on-demand --submodule-prefix modules/syntax-highlighting/external/: fast-forward
+e7d3fbc50b0209cb9f9b0812fd40298be03c7808 0e1bb14452e3fc66dcc81531212e1061e02c1a61 Joakim Olsson <joakim@unbound.se> 1623522452 +0200	fetch --prune --no-prune-tags --recurse-submodules-default on-demand --submodule-prefix modules/syntax-highlighting/external/: fast-forward

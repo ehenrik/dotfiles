@@ -1,0 +1,10 @@
+*~
+.DS_Store
+*.userprefs
+*.iml
+idea
+.idea
+.graphqlconfig
+federationSchemaExtensions.js
+.envrc
+.buildtools.yaml

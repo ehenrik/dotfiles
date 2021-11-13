@@ -1,0 +1,33 @@
+export JAVA_HOME=$(/usr/libexec/java_home -v 14.0)
+export LANG=en_US.UTF-8
+export LC_CTYPE=sv_SE.UTF-8
+export LC_NUMERIC=sv_SE.UTF-8
+export LC_TIME=sv_SE.UTF-8
+export LC_COLLATE=sv_SE.UTF-8
+export LC_MONETARY=sv_SE.UTF-8
+export LC_MESSAGES=en_US.UTF-8
+export LC_PAPER=sv_SE.UTF-8
+export LC_NAME=sv_SE.UTF-8
+export LC_ADDRESS=sv_SE.UTF-8
+export LC_TELEPHONE=sv_SE.UTF-8
+export LC_MEASUREMENT=sv_SE.UTF-8
+export LC_IDENTIFICATION=sv_SE.UTF-8
+export LC_ALL=en_US.UTF-8
+export EDITOR=vim
+export VISUAL=vim
+export SOURCE_DIR=${HOME}/Source
+export BUILD_TOOLS_PATH=${SOURCE_DIR}/build-tools
+export POWERLINE_COMMAND_ARGS=""
+export GOPATH=${HOME}/go
+export GOPRIVATE="gitlab.com/unboundsoftware/shiny"
+export _git_log_oneline_format='%C(green)%h%C(reset) %s%C(red)%d%C(reset)'
+export _git_log_brief_format='%C(green)%h%C(reset) %s%n%C(blue)(%ar by %an)%C(red)%d%C(reset)'
+
+export POSTGRES_HOST=postgres
+export POSTGRES_USERNAME=postgres
+export POSTGRES_PASSWORD=postgres
+export RABBITMQ_HOST=rabbitmq
+export RABBITMQ_VHOST=""
+export RABBITMQ_USERNAME=admin
+export RABBITMQ_PASSWORD=password
+

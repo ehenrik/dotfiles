@@ -1,0 +1,2 @@
+2d32241c20571f594719015fccd254e03badb0f1 48a61471a7f257787332714b2f6a16e9ec04174d Joakim Olsson <joakim@unbound.se> 1584428015 +0100	fetch --no-prune --no-prune-tags --recurse-submodules-default on-demand --submodule-prefix modules/prompt/external/powerlevel10k/: fast-forward
+48a61471a7f257787332714b2f6a16e9ec04174d 717573d845944c32e8a42059d21052e72972b4f2 Joakim Olsson <joakim@unbound.se> 1623522451 +0200	fetch --prune --no-prune-tags --recurse-submodules-default on-demand --submodule-prefix modules/prompt/external/powerlevel10k/: fast-forward

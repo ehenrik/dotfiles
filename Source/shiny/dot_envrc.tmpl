@@ -1,0 +1,9 @@
+source_up .envrc
+export ENGINE_API_KEY={{ (index (lastpass "devenv/apollo") 0).note.apolloKey -}}
+export APOLLO_KEY={{ (index (lastpass "devenv/apollo") 0).note.apolloKey -}}
+export GRAPH_VARIANT=dev
+export GITLAB_USER=argoyle
+export CLUSTER_NAME=jocke
+export GOPRIVATE=gitlab.com/unboundsoftware/shiny
+export PATH=/usr/local/opt/node@16/bin:${PATH}
+PATH_add ./bin

@@ -1,0 +1,7 @@
+export KOPS_STATE_STORE=s3://724902258495-eu-west-1-kops-storage
+export KOPS_FEATURE_FLAGS="UseServiceAccountIAM"
+export CI_TOKEN=${GITLAB_TOKEN}
+export CI_BUILD_TOKEN=${GITLAB_TOKEN}
+export NGROK_TOKEN={{ (index (lastpass "devenv/ngrok") 0).note.token -}}
+export NGROK_REGION=eu
+export KUBECONFIG=/Users/argoyle/.kube/config.d/kind-unbound.yaml:/Users/argoyle/.kube/config.d/k8s.unbound.se.yaml:

@@ -1,0 +1,4 @@
+0000000000000000000000000000000000000000 70a7a5cdee168b6cb9400cccbe48427906b6ca28 Joakim Olsson <joakim@unbound.se> 1520852377 +0100	clone: from https://github.com/zsh-users/zsh-completions.git
+70a7a5cdee168b6cb9400cccbe48427906b6ca28 2a30b05a5cf724a2d1c4c140c302dbf93f6aa6f6 Joakim Olsson <joakim@unbound.se> 1520852389 +0100	checkout: moving from master to 2a30b05a5cf724a2d1c4c140c302dbf93f6aa6f6
+2a30b05a5cf724a2d1c4c140c302dbf93f6aa6f6 cf565254e26bb7ce03f51889e9a29953b955b1fb Joakim Olsson <joakim@unbound.se> 1574759271 +0100	checkout: moving from 2a30b05a5cf724a2d1c4c140c302dbf93f6aa6f6 to cf565254e26bb7ce03f51889e9a29953b955b1fb
+cf565254e26bb7ce03f51889e9a29953b955b1fb 11ad0a45ff1695cac00e86c687cce6fa1fd1cdbd Joakim Olsson <joakim@unbound.se> 1631882567 +0200	checkout: moving from cf565254e26bb7ce03f51889e9a29953b955b1fb to 11ad0a45ff1695cac00e86c687cce6fa1fd1cdbd
