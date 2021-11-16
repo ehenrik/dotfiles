@@ -23,6 +23,12 @@ function reload {
     source ~/.zshrc
 }
 
+lp_add_ssh_key() {
+    local file=$1
+    local name=$2
+    printf "Private Key: %s\nPublic Key: %s" "$(cat $file)" "$(cat $file.pub)" | lpass add --sync=now --non-interactive --note-type=ssh-key $name
+}
+
 sso() {
   unset AWS_PROFILE
   export AWS_PROFILE=$1
