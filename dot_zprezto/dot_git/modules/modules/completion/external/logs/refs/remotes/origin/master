@@ -1,2 +1,0 @@
-70a7a5cdee168b6cb9400cccbe48427906b6ca28 8def5f15835f294ec6a1bf220fb330efddbe2575 Joakim Olsson <joakim@unbound.se> 1573548857 +0100	fetch --no-prune --no-prune-tags --recurse-submodules-default on-demand --submodule-prefix modules/completion/external/: fast-forward
-8def5f15835f294ec6a1bf220fb330efddbe2575 9dfd5c667072a9aef13a237fe3c3cc857ca9917f Joakim Olsson <joakim@unbound.se> 1623522448 +0200	fetch --prune --no-prune-tags --recurse-submodules-default on-demand --submodule-prefix modules/completion/external/: fast-forward

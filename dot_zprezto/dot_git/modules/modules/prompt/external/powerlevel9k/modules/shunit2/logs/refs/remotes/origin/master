@@ -1,1 +1,0 @@
-f97fea6ae2d0e2212f712d9103328ca92a3613bd ba130d69bbff304c0c6a9c5e8ab549ae140d6225 Joakim Olsson <joakim@unbound.se> 1573548863 +0100	fetch --no-prune --no-prune-tags --recurse-submodules-default on-demand --submodule-prefix modules/prompt/external/powerlevel9k/shunit2/: fast-forward

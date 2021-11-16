@@ -1,1 +1,0 @@
-0000000000000000000000000000000000000000 bca8fcd6efda0a3ebc43ac89abf08c3f52012513 Joakim Olsson <joakim@unbound.se> 1573548863 +0100	fetch --no-prune --no-prune-tags --recurse-submodules-default on-demand --submodule-prefix modules/prompt/external/powerlevel9k/shunit2/: storing head
