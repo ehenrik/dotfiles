@@ -1,0 +1,6 @@
+source_up .envrc
+export PORT=3334
+export HOST=0.0.0.0
+export GRAPHQL_API=http://localhost:4444/query
+export CYPRESS_BASE_URL=http://localhost:3334
+

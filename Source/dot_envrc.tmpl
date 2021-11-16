@@ -4,4 +4,4 @@ export CI_TOKEN=${GITLAB_TOKEN}
 export CI_BUILD_TOKEN=${GITLAB_TOKEN}
 export NGROK_TOKEN={{ (index (lastpass "devenv/ngrok") 0).note.token -}}
 export NGROK_REGION=eu
-export KUBECONFIG=/Users/argoyle/.kube/config.d/kind-unbound.yaml:/Users/argoyle/.kube/config.d/k8s.unbound.se.yaml:
+export KUBECONFIG={{ .chezmoi.homeDir }}/.kube/config.d/kind-unbound.yaml:{{ .chezmoi.homeDir }}/.kube/config.d/k8s.unbound.se.yaml:

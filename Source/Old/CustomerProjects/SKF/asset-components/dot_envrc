@@ -1,0 +1,3 @@
+source_up .envrc
+export AUTHORIZER_DUMMY=true
+export APP_SERVER_PORT=8090

@@ -1,0 +1,5 @@
+AWS_PROFILE=vcc
+unset KOPS_STATE_STORE
+function 1plogin() {
+  eval $(op signin volvo_cars_ccdp)
+}

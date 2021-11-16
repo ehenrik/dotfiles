@@ -6,10 +6,10 @@ export AWS_DEFAULT_REGION=eu-central-1
 export KOPS_STATE_STORE=s3://505676538145-eu-central-1-kops-storage
 export KOPS_FEATURE_FLAGS=""
 export CLUSTER_NAME=prod.paidit.se
-export KUBECONFIG=/Users/argoyle/.kube/config.d/kind-paidit.yaml:/Users/argoyle/.kube/config.d/prod.paidit.se.yaml:
+export KUBECONFIG={{ .chezmoi.homeDir }}/.kube/config.d/kind-paidit.yaml:{{ .chezmoi.homeDir }}/.kube/config.d/prod.paidit.se.yaml:
 
-export FIRESTORE_CREDENTIALS=/Users/argoyle/Source/CustomerProjects/Paidit/paidit-stage-4bcbcd8faf22.json
-export GOOGLE_APPLICATION_CREDENTIALS=/Users/argoyle/Source/CustomerProjects/Paidit/paidit-stage-4bcbcd8faf22.json
+export FIRESTORE_CREDENTIALS={{ .chezmoi.homeDir }}/Source/CustomerProjects/Paidit/paidit-stage-4bcbcd8faf22.json
+export GOOGLE_APPLICATION_CREDENTIALS={{ .chezmoi.homeDir }}/Source/CustomerProjects/Paidit/paidit-stage-4bcbcd8faf22.json
 export FIRESTORE_EMULATOR_HOST=0.0.0.0:8505
 
 export PAPERTRAIL_TOKEN={{ (index (lastpass "devenv/papertrail") 0).note.token -}}
