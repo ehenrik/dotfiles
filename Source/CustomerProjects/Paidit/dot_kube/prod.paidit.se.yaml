@@ -1,0 +1,28 @@
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUM4akNDQWRxZ0F3SUJBZ0lNRm5sUVE2RWkwMmhKNTU0aU1BMEdDU3FHU0liM0RRRUJDd1VBTUJVeEV6QVIKQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13SGhjTk1qRXdOREkwTURVd09UVXlXaGNOTXpFd05ESTBNRFV3T1RVeQpXakFWTVJNd0VRWURWUVFERXdwcmRXSmxjbTVsZEdWek1JSUJJakFOQmdrcWhraUc5dzBCQVFFRkFBT0NBUThBCk1JSUJDZ0tDQVFFQThpdUZNY0tRMTBQRmV0MkU3RUlKWWs3RTNYTHprcVpmNFhpL3lZVjVEY2NyaXJpUko1MUYKV0hlcDZJZjQ4aE9QMGhZRzFlaFU4WmIvRldibC9XcVlDSTEycll0Z1hXdEZvekYxUXU3eDhYcjFlT2Y0M2V5Rgo4MUNRaHBXeFlSTHY0MXRoNFJISFU1OW9ML3JUVUswMktxdjlMaWhVbDkzVFdrU2w1a3RNYVUydnhVR3dMRDNJCm5JbWFKcFIxNGlUWS8zVU00N0lKay96a1FmZGQveTRtbXZiK2w3Qm8xc21rWVRFKzVXbFpicm42UEFoVWQ2SloKdm0vMWhscDQ1R25kZ1h1N3QrWk1Md3hnOHcwTGV5V0dwbmVvQ25td21UVzR1TGk1Q2hBU3Z6eWVQUzZBaVJBcApxMWpoRjFNZ3d2NCt4ZVU3czNaNi8xOUtOeUFoa2xjZ3ZRSURBUUFCbzBJd1FEQU9CZ05WSFE4QkFmOEVCQU1DCkFRWXdEd1lEVlIwVEFRSC9CQVV3QXdFQi96QWRCZ05WSFE0RUZnUVVBV1hQNGRwZGdDWjJsd2lzc0tzczFQdDIKTnBjd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFHa3Fxa0V1OHd6STdsRVVWMGN0cGJQT1NpZWswNldrYnVMaQptY1JQRnE5VWpxRnRqbk1aeDJlMGU1RllqY2pMVlpVdlZjOEFGdWd5OVBncGhOL0c0YjhiK09SUW1hU2ZkZFlICmpXZElIWkNveVBHbXdqZUFIYkJJd3JtUjF6QWFuamExeW03bWN2K1U1SndLQjMrNDFQSktwaW5SQWhOai9MRnYKNDZiajk0Z3JPVnpZa3RqRmlTUzBJSTJ2VTBlTys4eHlZQWpNTjdUclgzQTVmK2RuY0VvYytMdUhGNVhFOVRIMwp5eDFQcDZjVkJlUjlaTEwxbndJV1I0a0FFTUpmVWRkRGY4MlAvcEFJVEVTbk9mMWl5UmVISUVJS252UEFCRFpLClk1QmV5VkJrSUhKMi8xbDh0NVVZV1JQNEo4SDhoNFJBTC9HQ2hkZjRyczJvRzNQT2Y2bz0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    server: https://api.prod.paidit.se
+  name: prod.paidit.se
+contexts:
+- context:
+    cluster: prod.paidit.se
+    user: joakim
+  name: prod.paidit.se
+current-context: prod.paidit.se
+kind: Config
+preferences: { }
+users:
+- name: joakim
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1alpha1
+      args:
+      - token
+      - -i
+      - prod.paidit.se
+      - -r
+      - arn:aws:iam::505676538145:role/KubernetesAdmin
+      command: aws-iam-authenticator
+      env: null
+      provideClusterInfo: false
