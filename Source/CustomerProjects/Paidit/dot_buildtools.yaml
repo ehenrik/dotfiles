@@ -1,0 +1,20 @@
+registry:
+  gitlab:
+    registry: registry.gitlab.com/paidit-se
+targets:
+  local:
+    context: kind-paidit
+    namespace: default
+  demo:
+    context: prod.paidit.se
+    namespace: demo
+  stage:
+    context: prod.paidit.se
+    namespace: stage
+  prod:
+    context: prod.paidit.se
+    namespace: prod
+  system:
+    context: prod.paidit.se
+    namespace: kube-system
+

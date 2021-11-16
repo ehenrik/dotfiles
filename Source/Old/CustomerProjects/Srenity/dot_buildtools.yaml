@@ -1,0 +1,8 @@
+registry:
+  gitlab:
+    registry: registry.gitlab.com/srenity1
+targets:
+  cgit:
+    context: kubernetes-admin@kubernetes
+    namespace: default
+

@@ -1,0 +1,17 @@
+targets:
+  local:
+    context: kind-unbound
+    namespace: default
+  staging:
+    context: k8s.unbound.se
+    namespace: staging
+  prod:
+    context: k8s.unbound.se
+    namespace: default
+  test:
+    context: kind-kind
+    namespace: default
+      #gitops:
+      #local:
+      #url: fluff
+      #path: somewhere
