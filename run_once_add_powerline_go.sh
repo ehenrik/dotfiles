@@ -1,3 +1,3 @@
 #!/bin/sh
 
-go get -u github.com/justjanne/powerline-go
+go install github.com/justjanne/powerline-go@latest

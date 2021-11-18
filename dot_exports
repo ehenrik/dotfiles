@@ -31,3 +31,7 @@ export RABBITMQ_VHOST=""
 export RABBITMQ_USERNAME=admin
 export RABBITMQ_PASSWORD=password
 
+# Temporary workaround for https://github.com/golang/go/issues/49138
+export MallocNanoZone=0
+
+export BASH_ENV=${HOME}/.bashrc

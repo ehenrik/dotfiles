@@ -1,8 +1,32 @@
+# Detect which `ls` flavor is in use
+if ls --color > /dev/null 2>&1; then # GNU `ls`
+	colorflag="--color"
+	export LS_COLORS='no=00:fi=00:di=01;31:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.ogg=01;35:*.mp3=01;35:*.wav=01;35:'
+else # macOS `ls`
+	colorflag="-G"
+#	export LSCOLORS='BxBxhxDxfxhxhxhxhxcxcx'
+fi
+
+# List all files colorized in long format, including dot files
+alias ll="ls -laF ${colorflag}"
+# Always use color output for `ls`
+alias ls="command ls ${colorflag}"
+
+# Always enable colored `grep` output
+# Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+# IP addresses
+alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
+alias localip="ipconfig getifaddr en0"
+alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
+
 alias gvim="mvim"
 alias vi="vim"
 alias k="kubectl"
 alias kc="kubectl --context"
-alias kcs="kubectl --namespace kube-system"
 alias updrepo="gfind . -type d -name .git ! -path '*/.terraform/*' -printf 'Updating repository %h\n' -execdir bash -c 'git ls-remote >/dev/null 2>&1 && git up' \;"
 alias dirtyrepo="gfind . -type d -name .git -printf '%h: ' -execdir bash -c \"if [[ -z \\\"\\\$(git status --porcelain | tail -n1)\\\" ]]; then echo Clean | color green Clean; else echo Dirty | color red Dirty; fi\" \;"
 alias branches="gfind . -type d -name .git -printf 'Repository %h: ' -execdir sh -c \"git branch -l | awk '{\\\$1=\\\$1};1' | sort | paste -d, -s | color red '* [^, ]*' green '* master'\" \;"
@@ -12,13 +36,9 @@ alias master="gfind . -type d -name .git -printf 'Repository %h:\n' -execdir sh 
 alias prune="gfind . -type d -name .git | xargs -I {} zsh -ic \"echo 'Pruning repository {}' && cd {} && gbl | grep '\[gone\]' | sed 's/^\s\+\([^ ]*\).*$/\1/' | xargs -r git branch -d \" \;"
 alias format-scala="find src -type d -name scala | xargs scalariform -r -p=.scalariform.conf"
 alias gup="git up"
-alias hpr="hub pull-request"
-alias pr="open 'https://github.com/pulls?user=inteleon'"
-alias ips='ifconfig -a | grep -o ''inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)'' | awk ''{ sub(/inet6? (addr:)? ?/, ""); print }'''
 alias bup='brew upgrade && for cask in $(brew list --cask); do brew info --cask $cask | head -3 | grep -v "^http" | sed -e "/^$cask: /s/$cask: \([^ ]*\).*$/\1/" -e "/^.*\/$cask/s/\/usr\/local\/Caskroom\/$cask\/\(.*\) (.*)$/\1/" | paste -d " " - - | read current installed && if [[ "$current" != "$installed" ]]; then echo "Upgrading $cask from $installed to $current"; brew upgrade --cask --greedy $cask; else echo "$cask:$current is latest version"; fi; done'
 alias vl='vault login -method=github token="$VAULT_GITHUB_TOKEN"'
 # Print each PATH entry on a separate line
 alias path='echo -e ${PATH//:/\\n}'
 alias awslocal="aws --endpoint-url http://localhost:4566"
 alias tf="terraform"
-
