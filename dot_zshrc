@@ -3,7 +3,7 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
-fpath=(/usr/local/share/zsh-completions /usr/local/share/zsh/site-functions $fpath)
+fpath=($HOMEBREW_PREFIX/share/zsh-completions $HOMEBREW_PREFIX/share/zsh/site-functions $fpath)
 
 for file in ~/.{functions,exports,paths,prompt,aliases,extra,auths,historyopts}; do
   [ -r "$file" ] && [ -f "$file" ] && source "$file";
@@ -26,7 +26,8 @@ function install_powerline_precmd() {
 if [ "$TERM" != "linux" ]; then
     install_powerline_precmd
 fi
-source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 zstyle ':completion:*' matcher-list '' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' '+l:|=* r:|=*'
 zstyle ':completion:*' ignored-patterns 'kubectl.docker'
@@ -44,10 +45,8 @@ eval "$(direnv hook zsh)"
 
 autoload -Uz compinit && compinit -i
 
-direnv reload
-
-source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc'
-source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc'
+source "$HOMEBREW_PREFIX/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
+source "$HOMEBREW_PREFIX/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
 source <(stern --completion zsh)
 source <(kubectl completion zsh)
 source <(kops completion zsh)
@@ -64,4 +63,4 @@ export SDKMAN_DIR="/Users/argoyle/.sdkman"
 [[ -s "/Users/argoyle/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/argoyle/.sdkman/bin/sdkman-init.sh"
 
 autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /usr/local/bin/terraform terraform
+complete -o nospace -C terraform terraform
