@@ -4,4 +4,4 @@ export AWS_CONFIGURE_SSO_DEFAULT_SSO_START_URL=https://d-93670ef60f.awsapps.com/
 export AWS_CONFIGURE_SSO_DEFAULT_SSO_REGION=eu-west-1
 #export AWS_PROFILE=lifeinside
 export PATH=/usr/local/opt/node@14/bin:${PATH}
-export KUBECONFIG=$( IFS=:; set -- ${PWD}/.kube/*.yaml; echo "$*" )
+export KUBECONFIG=$( IFS=:; set -- ${PWD}/.kube/kind*.yaml ${PWD}/.kube/*.yaml; echo "$*" )

@@ -6,7 +6,7 @@ export AWS_DEFAULT_REGION=eu-central-1
 export KOPS_STATE_STORE=s3://505676538145-eu-central-1-kops-storage
 export KOPS_FEATURE_FLAGS=""
 export CLUSTER_NAME=prod.paidit.se
-export KUBECONFIG=$( IFS=:; set -- ${PWD}/.kube/*.yaml; echo "$*" )
+export KUBECONFIG=$( IFS=:; set -- ${PWD}/.kube/kind*.yaml ${PWD}/.kube/*.yaml; echo "$*" )
 
 export FIRESTORE_CREDENTIALS={{ .chezmoi.homeDir }}/Source/CustomerProjects/Paidit/paidit-stage-4bcbcd8faf22.json
 export GOOGLE_APPLICATION_CREDENTIALS={{ .chezmoi.homeDir }}/Source/CustomerProjects/Paidit/paidit-stage-4bcbcd8faf22.json
