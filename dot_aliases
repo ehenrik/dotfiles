@@ -42,3 +42,4 @@ alias vl='vault login -method=github token="$VAULT_GITHUB_TOKEN"'
 alias path='echo -e ${PATH//:/\\n}'
 alias awslocal="aws --endpoint-url http://localhost:4566"
 alias tf="terraform"
+alias cm="chezmoi"
