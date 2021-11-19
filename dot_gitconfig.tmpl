@@ -35,7 +35,11 @@
 
 [core]
 	autocrlf = input
+	{{ if (eq .chezmoi.arch "amd64") -}}
 	editor = /usr/local/bin/vim
+	{{ else -}}
+	editor = /opt/homebrew/bin/vim
+	{{ end -}}
 	excludesfile = /Users/argoyle/.gitignore_global
 	hooksPath = /Users/argoyle/.git-hooks
 	pager = delta --theme='Dracula' --dark
