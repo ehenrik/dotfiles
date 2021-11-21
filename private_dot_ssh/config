@@ -7,7 +7,7 @@ Host *.k8s.unbound.se
 Host gitlab.com
   User git
 
-Host hassio.local
+Host homeassistant.local
   User root
   Port 2222
 
