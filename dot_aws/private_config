@@ -27,7 +27,8 @@ sso_account_id = 280918118349
 sso_role_name = AWSAdministratorAccess
 region = eu-west-1
 output = json
-#credential_process = aws-sso-credential-process --profile plint-infra-share
+aws_credentials_expiration = 2021-11-30T19:24:51Z
+#credential_process = aws-sso-util credential-process --profile plint-infra-share
 
 [profile plint-infra-network]
 sso_start_url = https://d-93670bd1b0.awsapps.com/start
@@ -37,6 +38,7 @@ sso_role_name = AWSPowerUserAccess
 region = eu-west-1
 output = json
 #credential_process = aws-sso-credential-process --profile plint-infra-network
+aws_credentials_expiration = 2021-11-30T19:24:45Z
 
 [profile plint-prod-nu]
 sso_start_url = https://d-93670bd1b0.awsapps.com/start
@@ -46,6 +48,7 @@ sso_role_name = AWSAdministratorAccess
 region = eu-west-1
 output = json
 #credential_process = aws-sso-credential-process --profile plint-prod-nu
+aws_credentials_expiration = 2021-11-30T20:52:16Z
 
 [profile plint-staging]
 sso_start_url = https://d-93670bd1b0.awsapps.com/start
@@ -54,7 +57,8 @@ sso_account_id = 690178016966
 sso_role_name = AWSAdministratorAccess
 region = eu-west-1
 output = json
-#credential_process = aws-sso-credential-process --profile plint-staging
+aws_credentials_expiration = 2021-11-30T17:22:48Z
+#credential_process = aws-sso-util credential-process --profile plint-staging
 
 [profile lifeinside-staging]
 sso_start_url = https://d-93670ef60f.awsapps.com/start/
@@ -64,6 +68,7 @@ sso_role_name = AWSAdministratorAccess
 region = eu-west-1
 output = json
 #credential_process = aws-sso-credential-process --profile lifeinside-staging
+aws_credentials_expiration = 2021-11-23T19:12:18Z
 
 [profile lifeinside-prod]
 sso_start_url = https://d-93670ef60f.awsapps.com/start/
@@ -73,3 +78,24 @@ region = eu-west-1
 sso_account_id = 008824663682
 sso_role_name = AWSAdministratorAccess
 output = json
+aws_credentials_expiration = 2021-11-23T19:35:29Z
+
+[profile plint-staging-readonly]
+sso_start_url = https://d-93670bd1b0.awsapps.com/start
+sso_region = eu-west-1
+region = eu-west-1
+#credential_process = aws-sso-util credential-process --profile plint-staging-readonly
+sso_account_id = 690178016966
+sso_role_name = AWSReadOnlyAccess
+output = json
+aws_credentials_expiration = 2021-11-30T10:18:43Z
+
+[profile plint-prod-nu-readonly]
+sso_start_url = https://d-93670bd1b0.awsapps.com/start
+sso_region = eu-west-1
+region = eu-west-1
+credential_process = aws-sso-util credential-process --profile plint-prod-nu-readonly
+sso_account_id = 143893719956
+sso_role_name = AWSReadOnlyAccess
+output = json
+aws_credentials_expiration = 2021-11-30T13:56:56Z
