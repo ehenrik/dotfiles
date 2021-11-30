@@ -64,6 +64,7 @@ export SDKMAN_DIR="/Users/argoyle/.sdkman"
 [[ -s "/Users/argoyle/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/argoyle/.sdkman/bin/sdkman-init.sh"
 
 autoload -U +X bashcompinit && bashcompinit
+autoload -U zmv
 complete -o nospace -C terraform terraform
 
 set -o emacs
