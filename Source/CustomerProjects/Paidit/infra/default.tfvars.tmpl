@@ -1,0 +1,7 @@
+cloudamqp_customer_api_key = "{{ (index (lastpassRaw "Shared-paiditenv/prod/cloudamqp_api_key") 0).note -}}"
+mongodbatlas_private_key   = {{ (index (lastpass "Shared-paiditenv/prod/Mongo Atlas API Project") 0).note.password | trim | quote }}
+mongodbatlas_public_key    = {{ (index (lastpass "Shared-paiditenv/prod/Mongo Atlas API Project") 0).note.username | trim | quote }}
+slack_ops_url              = {{ (index (lastpass "Shared-paiditenv/prod/slack_webhook_url") 0).note.ops | trim | quote }}
+docker_config              = <<EOT
+{{ (index (lastpassRaw "Shared-paiditenv/prod/dockercfg") 0).note }}
+EOT
