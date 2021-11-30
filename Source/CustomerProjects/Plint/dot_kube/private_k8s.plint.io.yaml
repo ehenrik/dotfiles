@@ -9,9 +9,8 @@ contexts:
     cluster: k8s.plint.io
     user: k8s.plint.io
   name: k8s.plint.io
-current-context: k8s.plint.io
 kind: Config
-preferences: {}
+preferences: { }
 users:
 - name: k8s.plint.io
   user:
@@ -22,6 +21,3 @@ users:
       - -i
       - k8s.plint.io
       command: aws-iam-authenticator
-      env:
-      - name: AWS_PROFILE
-        value: plint-prod-nu
