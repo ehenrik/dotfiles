@@ -1,0 +1,9 @@
+cloudamqp_customer_api_key = "{{ (index (lastpassRaw "envconfig\\prod/cloudamqp_api_key") 0).note -}}"
+slack_ops_url              = "{{ (index (lastpassRaw "envconfig\\prod/slack_ops_url") 0).note -}}"
+docker_config            = <<EOT
+{{ (index (lastpassRaw "envconfig\\prod/dockercfg") 0).note }}
+EOT
+mongodbatlas_private_key = {{ (index (lastpass "envconfig\\prod/mongodb_atlas_api_key") 0).note.private | trim | quote }}
+mongodbatlas_public_key  = {{ (index (lastpass "envconfig\\prod/mongodb_atlas_api_key") 0).note.public | trim | quote }}
+gitlab_token             = {{ (index (lastpass "devenv/.auths") 0).note.gitlabToken | trim | quote }}
+github_token             = {{ (index (lastpass "devenv/.auths") 0).note.githubToken | trim | quote }}
