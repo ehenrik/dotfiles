@@ -9,7 +9,6 @@ contexts:
     cluster: gke_dev-europe-west1-200515_europe-west1-b_dev-europe-west1
     user: gke_dev-europe-west1-200515_europe-west1-b_dev-europe-west1
   name: gke_dev-europe-west1-200515_europe-west1-b_dev-europe-west1
-current-context: kind-nectarine
 kind: Config
 preferences: {}
 users:
