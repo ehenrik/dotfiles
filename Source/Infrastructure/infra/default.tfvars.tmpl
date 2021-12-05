@@ -7,3 +7,5 @@ mongodbatlas_private_key = {{ (index (lastpass "envconfig\\prod/mongodb_atlas_ap
 mongodbatlas_public_key  = {{ (index (lastpass "envconfig\\prod/mongodb_atlas_api_key") 0).note.public | trim | quote }}
 gitlab_token             = {{ (index (lastpass "devenv/.auths") 0).note.gitlabToken | trim | quote }}
 github_token             = {{ (index (lastpass "devenv/.auths") 0).note.githubToken | trim | quote }}
+loki_api_key             = {{ (index (lastpass "envconfig\\prod/grafana-cloud") 0).note.lokiApiKey | trim | quote }}
+prometheus_api_key       = {{ (index (lastpass "envconfig\\prod/grafana-cloud") 0).note.prometheusApiKey | trim | quote }}
