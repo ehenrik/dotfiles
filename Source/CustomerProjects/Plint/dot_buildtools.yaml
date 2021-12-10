@@ -9,7 +9,7 @@ targets:
   staging:
     context: k8s.staging.plint.dev
     namespace: default
-  prod:
+  production:
     context: k8s.plint.io
     namespace: default
   infra:
