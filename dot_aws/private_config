@@ -15,7 +15,7 @@ sso_account_id = 892944254496
 sso_role_name = AWSAdministratorAccess
 region = eu-west-1
 output = json
-aws_credentials_expiration = 2021-11-23T19:12:18Z
+aws_credentials_expiration = 2021-12-15T22:55:32Z
 
 [profile lifeinside-prod]
 sso_start_url = https://d-93670ef60f.awsapps.com/start/
@@ -24,7 +24,7 @@ region = eu-west-1
 sso_account_id = 008824663682
 sso_role_name = AWSAdministratorAccess
 output = json
-aws_credentials_expiration = 2021-12-11T01:29:37Z
+aws_credentials_expiration = 2021-12-15T22:54:29Z
 
 [profile plint]
 region=eu-west-1
@@ -36,7 +36,7 @@ sso_account_id = 280918118349
 sso_role_name = AWSAdministratorAccess
 region = eu-west-1
 output = json
-aws_credentials_expiration = 2021-12-10T22:48:03Z
+aws_credentials_expiration = 2021-12-17T21:18:15Z
 
 [profile plint-infra-network]
 sso_start_url = https://d-93670bd1b0.awsapps.com/start
@@ -45,7 +45,7 @@ sso_account_id = 016579404663
 sso_role_name = AWSPowerUserAccess
 region = eu-west-1
 output = json
-aws_credentials_expiration = 2021-12-10T22:47:59Z
+aws_credentials_expiration = 2021-12-13T17:36:42Z
 
 [profile plint-prod-nu]
 sso_start_url = https://d-93670bd1b0.awsapps.com/start
@@ -54,7 +54,7 @@ sso_account_id = 143893719956
 sso_role_name = AWSAdministratorAccess
 region = eu-west-1
 output = json
-aws_credentials_expiration = 2021-12-11T00:59:32Z
+aws_credentials_expiration = 2021-12-13T17:40:18Z
 
 [profile plint-prod-nu-readonly]
 sso_start_url = https://d-93670bd1b0.awsapps.com/start
@@ -72,7 +72,7 @@ sso_account_id = 690178016966
 sso_role_name = AWSAdministratorAccess
 region = eu-west-1
 output = json
-aws_credentials_expiration = 2021-12-10T00:04:37Z
+aws_credentials_expiration = 2021-12-13T17:38:36Z
 
 [profile plint-staging-readonly]
 sso_start_url = https://d-93670bd1b0.awsapps.com/start
@@ -90,7 +90,7 @@ region = eu-central-1
 sso_account_id = 708748552226
 sso_role_name = AWSAdministratorAccess
 output = json
-aws_credentials_expiration = 2021-12-09T22:26:52Z
+aws_credentials_expiration = 2021-12-13T17:41:29Z
 
 [profile plint-nrk]
 sso_start_url = https://d-93670bd1b0.awsapps.com/start
@@ -99,7 +99,7 @@ region = eu-west-1
 sso_account_id = 714269099347
 sso_role_name = AWSAdministratorAccess
 output = json
-aws_credentials_expiration = 2021-12-10T22:48:07Z
+aws_credentials_expiration = 2021-12-13T17:42:02Z
 
 [profile plint-root]
 sso_start_url = https://d-93670bd1b0.awsapps.com/start
@@ -118,3 +118,12 @@ sso_account_id = 591642163586
 sso_role_name = AWSAdministratorAccess
 output = json
 aws_credentials_expiration = 2021-12-13T21:06:41Z
+
+[profile plint-sprint]
+sso_start_url = https://d-93670bd1b0.awsapps.com/start
+sso_region = eu-west-1
+region = eu-west-1
+sso_account_id = 569838322684
+sso_role_name = AWSAdministratorAccess
+output = json
+aws_credentials_expiration = 2021-12-16T17:53:53Z
