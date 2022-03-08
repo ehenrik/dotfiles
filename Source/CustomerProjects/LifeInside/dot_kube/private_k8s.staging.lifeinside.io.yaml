@@ -11,12 +11,12 @@ contexts:
   name: k8s.staging.lifeinside.io
 current-context: k8s.staging.lifeinside.io
 kind: Config
-preferences: {}
+preferences: { }
 users:
 - name: k8s.staging.lifeinside.io
   user:
     exec:
-      apiVersion: client.authentication.k8s.io/v1alpha1
+      apiVersion: client.authentication.k8s.io/v1beta1
       args:
       - token
       - -i
