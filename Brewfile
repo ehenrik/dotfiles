@@ -178,7 +178,7 @@ brew "ssh-copy-id", link: true
 brew "stern"
 brew "svtplay-dl"
 brew "swagger-codegen"
-brew "terraform"
+brew "tfswitch"
 brew "tig"
 brew "tmux"
 brew "torsocks"
