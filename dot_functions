@@ -33,7 +33,7 @@ lp_add_ssh_key() {
 sso() {
     unset AWS_PROFILE
     export AWS_PROFILE=$1
-    aws sts get-caller-identity &> /dev/null || aws sso login || (unset AWS_PROFILE && aws-sso-util configure profile --no-credential-process $1)
+    aws sts get-caller-identity &> /dev/null || aws sso login --profile $1 || (unset AWS_PROFILE && aws-sso-util configure profile --no-credential-process $1)
     aws-export-credentials --credentials-file-profile $1
 }
 
