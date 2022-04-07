@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+check_bin() {
+  BIN=$1
+  NAME=$2
+  type "${BIN}" 1>/dev/null 2>&1 || (
+    echo "${NAME} is required"
+    exit 1
+  )
+}
+
+show_secret() {
+  aws secretsmanager get-secret-value --secret-id "$1" \
+  | jq -r '.SecretString' \
+  | jq -r '"Username: \(.DB_USERNAME)\nPassword: \(.DB_PASSWORD)"'
+}
+
+fetch_instance() {
+  aws ec2 describe-instances \
+    --filters Name=tag:k8s.io/role/node,Values=1 \
+    --max-items 1 \
+  | jq -r '.Reservations[].Instances[0] | "\(.InstanceId) \(.Placement.AvailabilityZone) \(.PublicDnsName)"'
+}
+
+put_ssh_key() {
+  local id
+  local az
+  local ssh_key
+  id=$1
+  az=$2
+  ssh_key=$3
+
+  aws ec2-instance-connect send-ssh-public-key \
+    --instance-id "$id" \
+    --instance-os-user ubuntu \
+    --ssh-public-key "file://$ssh_key" \
+    --availability-zone "$az" 1>/dev/null
+}
+
+check_bin aws "AWS CLI"
+check_bin jq "jq"
+check_bin ssh "ssh"
+
+if [ -z "${1-}" ]; then
+  echo "Provide the full path to the SSH public key to use"
+  exit 1
+fi
+
+if [ ! -r "${1}" ]; then
+  echo "Provided SSH public key could not be found"
+  exit 1
+fi
+
+echo "MySQL: "
+show_secret "rds/mysql/prod"
+echo "Port 13306 will be forwarded to the RDS instance"
+echo "PostgreSQL: "
+show_secret "rds/postgres/prod-psql"
+read -r INSTANCE_ID AZ ADDR < <(fetch_instance)
+put_ssh_key "${INSTANCE_ID}" "${AZ}" "$1"
+echo "Connecting to instance..."
+echo "Port 15432 will be forwarded to the RDS instance"
+echo "Connect using username and password above"
+ssh "ubuntu@${ADDR}" -L 15432:prod-psql.csmhb6o5r4v7.eu-west-1.rds.amazonaws.com:5432 -L 13306:prod.csmhb6o5r4v7.eu-west-1.rds.amazonaws.com:3306
