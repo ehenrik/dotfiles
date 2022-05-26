@@ -8,4 +8,9 @@ targets:
     context: k8s.staging.goodfeed.io
   local:
     context: kind-goodfeed
+  test:
+    context: kind-kind
+    namespace: default
+
+
 
