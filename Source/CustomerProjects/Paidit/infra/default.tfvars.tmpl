@@ -7,3 +7,32 @@ docker_config              = <<EOT
 EOT
 loki_api_key               = {{ (index (lastpass "Shared-paiditenv/system/grafana-cloud") 0).note.lokiApiKey | trim | quote }}
 prometheus_api_key         = {{ (index (lastpass "Shared-paiditenv/system/grafana-cloud") 0).note.prometheusApiKey | trim | quote }}
+harbour_secret_prod = {
+  API_KEY = "{{ (index (lastpassRaw "Shared-paiditenv/prod/harbour") 0).note -}}"
+}
+harbour_secret_demo = {
+  API_KEY = "{{ (index (lastpassRaw "Shared-paiditenv/demo/harbour") 0).note -}}"
+}
+harbour_secret_stage = {
+  API_KEY = "{{ (index (lastpassRaw "Shared-paiditenv/stage/harbour") 0).note -}}"
+}
+fortysixelks_password = {{ (index (lastpass "Shared-paiditenv/system/46elks") 0).note.password | trim | quote }}
+stripe_prod = {
+  STRIPE_PUBLIC_KEY = {{ (index (lastpass "Shared-paiditenv/system/stripe_prod") 0).note.clientId | trim | quote }}
+  STRIPE_SECRET_KEY = {{ (index (lastpass "Shared-paiditenv/system/stripe_prod") 0).note.secret | trim | quote }}
+  WEBHOOK_SECRET    = {{ (index (lastpass "Shared-paiditenv/system/stripe_prod") 0).note.webhookSecret | trim | quote }}
+}
+stripe_dev = {
+  STRIPE_PUBLIC_KEY = {{ (index (lastpass "Shared-paiditenv/system/stripe_dev") 0).note.clientId | trim | quote }}
+  STRIPE_SECRET_KEY = {{ (index (lastpass "Shared-paiditenv/system/stripe_dev") 0).note.secret | trim | quote }}
+  WEBHOOK_SECRET    = {{ (index (lastpass "Shared-paiditenv/system/stripe_dev") 0).note.webhookSecret | trim | quote }}
+}
+firestore_prod = <<EOT
+{{ (index (lastpassRaw "Shared-paiditenv/prod/firestore") 0).note -}}
+EOT
+firestore_demo = <<EOT
+{{ (index (lastpassRaw "Shared-paiditenv/demo/firestore") 0).note -}}
+EOT
+firestore_stage = <<EOT
+{{ (index (lastpassRaw "Shared-paiditenv/stage/firestore") 0).note -}}
+EOT
