@@ -1,2 +1,3 @@
 source_up .envrc
+use nvm package.json
 export PORT=4444
