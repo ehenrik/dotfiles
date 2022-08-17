@@ -27,92 +27,92 @@ stripe_dev = {
   STRIPE_SECRET_KEY = {{ (index (lastpass "Shared-paiditenv/system/stripe_dev") 0).note.secret | trim | quote }}
   WEBHOOK_SECRET    = {{ (index (lastpass "Shared-paiditenv/system/stripe_dev") 0).note.webhookSecret | trim | quote }}
 }
-firestore_prod = <<EOT
+firestore_prod  = <<EOT
 {{ (index (lastpassRaw "Shared-paiditenv/prod/firestore") 0).note -}}
 EOT
-firestore_demo = <<EOT
+firestore_demo  = <<EOT
 {{ (index (lastpassRaw "Shared-paiditenv/demo/firestore") 0).note -}}
 EOT
 firestore_stage = <<EOT
 {{ (index (lastpassRaw "Shared-paiditenv/stage/firestore") 0).note -}}
 EOT
 swedbank_cert_prod = {
-  pem = <<EOT
+  pem   = <<EOT
 {{ (index (lastpass "Shared-paiditenv/prod/swedbank") 0).note.publicKey | trim | replace "^^" "\n" -}}
 EOT
-  key = <<EOT
+  key   = <<EOT
 {{ (index (lastpass "Shared-paiditenv/prod/swedbank") 0).note.privateKey | trim | replace "^^" "\n" -}}
 EOT
   alias = {{ (index (lastpass "Shared-paiditenv/prod/swedbank") 0).note.hostname | trim | quote }}
 }
 feskarbritta_cert_prod = {
-  pem = <<EOT
+  pem   = <<EOT
 {{ (index (lastpass "Shared-paiditenv/prod/feskarbritta") 0).note.publicKey | trim | replace "^^" "\n" -}}
 EOT
-  key = <<EOT
+  key   = <<EOT
 {{ (index (lastpass "Shared-paiditenv/prod/feskarbritta") 0).note.privateKey | trim | replace "^^" "\n" -}}
 EOT
   alias = {{ (index (lastpass "Shared-paiditenv/prod/feskarbritta") 0).note.hostname | trim | quote }}
 }
 swedbank_cert_demo = {
-  pem = <<EOT
+  pem   = <<EOT
 {{ (index (lastpass "Shared-paiditenv/demo/swedbank") 0).note.publicKey | trim | replace "^^" "\n" -}}
 EOT
-  key = <<EOT
+  key   = <<EOT
 {{ (index (lastpass "Shared-paiditenv/demo/swedbank") 0).note.privateKey | trim | replace "^^" "\n" -}}
 EOT
   alias = {{ (index (lastpass "Shared-paiditenv/demo/swedbank") 0).note.hostname | trim | quote }}
 }
 feskarbritta_cert_demo = {
-  pem = <<EOT
+  pem   = <<EOT
 {{ (index (lastpass "Shared-paiditenv/demo/feskarbritta") 0).note.publicKey | trim | replace "^^" "\n" -}}
 EOT
-  key = <<EOT
+  key   = <<EOT
 {{ (index (lastpass "Shared-paiditenv/demo/feskarbritta") 0).note.privateKey | trim | replace "^^" "\n" -}}
 EOT
   alias = {{ (index (lastpass "Shared-paiditenv/demo/feskarbritta") 0).note.hostname | trim | quote }}
 }
 swedbank_cert_stage = {
-  pem = <<EOT
+  pem   = <<EOT
 {{ (index (lastpass "Shared-paiditenv/stage/swedbank") 0).note.publicKey | trim | replace "^^" "\n" -}}
 EOT
-  key = <<EOT
+  key   = <<EOT
 {{ (index (lastpass "Shared-paiditenv/stage/swedbank") 0).note.privateKey | trim | replace "^^" "\n" -}}
 EOT
   alias = {{ (index (lastpass "Shared-paiditenv/stage/swedbank") 0).note.hostname | trim | quote }}
 }
 feskarbritta_cert_stage = {
-  pem = <<EOT
+  pem   = <<EOT
 {{ (index (lastpass "Shared-paiditenv/stage/feskarbritta") 0).note.publicKey | trim | replace "^^" "\n" -}}
 EOT
-  key = <<EOT
+  key   = <<EOT
 {{ (index (lastpass "Shared-paiditenv/stage/feskarbritta") 0).note.privateKey | trim | replace "^^" "\n" -}}
 EOT
   alias = {{ (index (lastpass "Shared-paiditenv/stage/feskarbritta") 0).note.hostname | trim | quote }}
 }
 infrasec_cert_prod = {
-  ca = <<EOT
+  ca         = <<EOT
 {{ (index (lastpass "Shared-paiditenv/prod/infrasec") 0).note.publicKey | trim | replace "^^" "\n" -}}
 EOT
-  cert = <<EOT
+  cert       = <<EOT
 {{ (index (lastpass "Shared-paiditenv/prod/infrasec") 0).note.privateKey | trim | replace "^^" "\n" -}}
 EOT
   passphrase = {{ (index (lastpass "Shared-paiditenv/prod/infrasec") 0).note.hostname | trim | quote }}
 }
 infrasec_cert_demo = {
-  ca = <<EOT
+  ca         = <<EOT
 {{ (index (lastpass "Shared-paiditenv/demo/infrasec") 0).note.publicKey | trim | replace "^^" "\n" -}}
 EOT
-  cert = <<EOT
+  cert       = <<EOT
 {{ (index (lastpass "Shared-paiditenv/demo/infrasec") 0).note.privateKey | trim | replace "^^" "\n" -}}
 EOT
   passphrase = {{ (index (lastpass "Shared-paiditenv/demo/infrasec") 0).note.hostname | trim | quote }}
 }
 infrasec_cert_stage = {
-  ca = <<EOT
+  ca         = <<EOT
 {{ (index (lastpass "Shared-paiditenv/stage/infrasec") 0).note.publicKey | trim | replace "^^" "\n" -}}
 EOT
-  cert = <<EOT
+  cert       = <<EOT
 {{ (index (lastpass "Shared-paiditenv/stage/infrasec") 0).note.privateKey | trim | replace "^^" "\n" -}}
 EOT
   passphrase = {{ (index (lastpass "Shared-paiditenv/stage/infrasec") 0).note.hostname | trim | quote }}
