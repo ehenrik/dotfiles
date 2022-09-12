@@ -24,119 +24,7 @@ region = eu-west-1
 sso_account_id = 008824663682
 sso_role_name = AWSAdministratorAccess
 output = json
-aws_credentials_expiration = 2022-05-25T00:36:48Z
-
-[profile plint]
-region=eu-west-1
-
-[profile plint-infra-share]
-sso_start_url = https://plint.awsapps.com/start
-sso_region = eu-west-1
-sso_account_id = 280918118349
-sso_role_name = AWSAdministratorAccess
-region = eu-west-1
-output = json
-aws_credentials_expiration = 2022-05-18T18:04:27Z
-
-[profile plint-infra-network]
-sso_start_url = https://plint.awsapps.com/start
-sso_region = eu-west-1
-sso_account_id = 016579404663
-sso_role_name = AWSAdministratorAccess
-region = eu-west-1
-output = json
-aws_credentials_expiration = 2022-04-21T00:48:03Z
-
-[profile plint-prod-nu]
-sso_start_url = https://plint.awsapps.com/start
-sso_region = eu-west-1
-sso_account_id = 143893719956
-sso_role_name = AWSAdministratorAccess
-region = eu-west-1
-output = json
-aws_credentials_expiration = 2022-05-03T02:11:46Z
-
-[profile plint-prod-nu-readonly]
-sso_start_url = https://plint.awsapps.com/start
-sso_region = eu-west-1
-region = eu-west-1
-sso_account_id = 143893719956
-sso_role_name = AWSReadOnlyAccess
-output = json
-aws_credentials_expiration = 2021-11-30T13:56:56Z
-
-[profile plint-staging]
-sso_start_url = https://plint.awsapps.com/start
-sso_region = eu-west-1
-sso_account_id = 690178016966
-sso_role_name = AWSAdministratorAccess
-region = eu-west-1
-output = json
-aws_credentials_expiration = 2022-04-20T23:28:24Z
-
-[profile plint-staging-readonly]
-sso_start_url = https://plint.awsapps.com/start
-sso_region = eu-west-1
-region = eu-west-1
-sso_account_id = 690178016966
-sso_role_name = AWSReadOnlyAccess
-output = json
-aws_credentials_expiration = 2021-11-30T10:18:43Z
-
-[profile plint-europarl]
-sso_start_url = https://plint.awsapps.com/start
-sso_region = eu-west-1
-region = eu-central-1
-sso_account_id = 708748552226
-sso_role_name = AWSAdministratorAccess
-output = json
-aws_credentials_expiration = 2022-04-22T01:30:36Z
-
-[profile plint-nrk]
-sso_start_url = https://plint.awsapps.com/start
-sso_region = eu-west-1
-region = eu-west-1
-sso_account_id = 714269099347
-sso_role_name = AWSAdministratorAccess
-output = json
-aws_credentials_expiration = 2022-04-21T01:18:19Z
-
-[profile plint-root]
-sso_start_url = https://plint.awsapps.com/start
-sso_region = eu-west-1
-region = eu-west-1
-sso_account_id = 641706582645
-sso_role_name = AWSAdministratorAccess
-output = json
-aws_credentials_expiration = 2021-12-11T01:48:03Z
-
-[profile plint-mps]
-sso_start_url = https://plint.awsapps.com/start
-sso_region = eu-west-1
-region = eu-west-1
-sso_account_id = 591642163586
-sso_role_name = AWSAdministratorAccess
-output = json
-aws_credentials_expiration = 2022-04-21T03:08:03Z
-
-[profile plint-sprint]
-sso_start_url = https://plint.awsapps.com/start
-sso_region = eu-west-1
-region = eu-west-1
-sso_account_id = 569838322684
-sso_role_name = AWSAdministratorAccess
-output = json
-aws_credentials_expiration = 2022-05-23T21:46:29Z
-
-[profile plint-test]
-sso_start_url = https://plint.awsapps.com/start
-sso_region = eu-west-1
-region = eu-west-1
-sso_account_id = 505135256759
-sso_role_name = AWSAdministratorAccess
-output = json
-aws_credentials_expiration = 2022-05-10T01:50:29Z
-
+aws_credentials_expiration = 2022-09-08T02:18:47Z
 
 [profile goodfeed-admin]
 sso_start_url = https://goodfeed.awsapps.com/start/
@@ -145,7 +33,7 @@ region = eu-west-1
 sso_account_id = 929585105493
 sso_role_name = AWSAdministratorAccess
 output = json
-aws_credentials_expiration = 2022-04-28T18:26:21Z
+aws_credentials_expiration = 2022-09-07T21:55:36Z
 
 [profile goodfeed-staging]
 sso_start_url = https://goodfeed.awsapps.com/start/
@@ -154,4 +42,4 @@ region = eu-west-1
 sso_account_id = 643762608543
 sso_role_name = AWSAdministratorAccess
 output = json
-aws_credentials_expiration = 2022-05-05T18:15:46Z
+aws_credentials_expiration = 2022-09-07T21:52:43Z
