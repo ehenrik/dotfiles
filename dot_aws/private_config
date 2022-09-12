@@ -1,45 +1,13 @@
+[plugins]
+endpoint = awscli_plugin_endpoint
+
 [profile unbound]
 region=eu-west-1
 
 [profile local]
 region = eu-west-1
 output = json
+endpoint_url = http://localhost:4566
 
 [profile paidit]
 region=eu-central-1
-
-[profile lifeinside-staging]
-sso_start_url = https://lifeinside.awsapps.com/start/
-sso_region = eu-west-1
-sso_account_id = 892944254496
-sso_role_name = AWSAdministratorAccess
-region = eu-west-1
-output = json
-aws_credentials_expiration = 2022-05-18T00:15:26Z
-
-[profile lifeinside-prod]
-sso_start_url = https://lifeinside.awsapps.com/start/
-sso_region = eu-west-1
-region = eu-west-1
-sso_account_id = 008824663682
-sso_role_name = AWSAdministratorAccess
-output = json
-aws_credentials_expiration = 2022-09-08T02:18:47Z
-
-[profile goodfeed-admin]
-sso_start_url = https://goodfeed.awsapps.com/start/
-sso_region = eu-west-1
-region = eu-west-1
-sso_account_id = 929585105493
-sso_role_name = AWSAdministratorAccess
-output = json
-aws_credentials_expiration = 2022-09-07T21:55:36Z
-
-[profile goodfeed-staging]
-sso_start_url = https://goodfeed.awsapps.com/start/
-sso_region = eu-west-1
-region = eu-west-1
-sso_account_id = 643762608543
-sso_role_name = AWSAdministratorAccess
-output = json
-aws_credentials_expiration = 2022-09-07T21:52:43Z
