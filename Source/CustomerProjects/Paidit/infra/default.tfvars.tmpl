@@ -117,3 +117,4 @@ EOT
 EOT
   passphrase = {{ (index (lastpass "Shared-paiditenv/stage/infrasec") 0).note.hostname | trim | quote }}
 }
+gitlab_token = "{{ (index (lastpassRaw "Shared-paiditenv/system/gitlab_token") 0).note -}}"
