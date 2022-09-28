@@ -18,11 +18,14 @@ users:
     exec:
       apiVersion: client.authentication.k8s.io/v1beta1
       args:
-      - token
-      - -i
+      - eks
+      - get-token
+      - --cluster-name
       - k8s.unbound.se
-      - -r
+      - --role-arn
       - arn:aws:iam::724902258495:role/KubernetesAdmin
-      command: aws-iam-authenticator
-      env: null
+      command: aws
+      env:
+      - name: AWS_PROFILE
+        value: unbound
       provideClusterInfo: false
