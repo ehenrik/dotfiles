@@ -1,3 +1,5 @@
 source_up .envrc
 export PORT=4081
 export AUTH_URL=http://localhost:4080
+export SERVICE=$(basename "$PWD")
+export URL=http://localhost:${PORT}/query
