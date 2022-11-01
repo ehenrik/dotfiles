@@ -40,7 +40,6 @@ alias gup="git up"
 alias gcpa="git cherry-pick --abort"
 alias gcpc="git cherry-pick --continue"
 alias gcps="git cherry-pick --skip"
-alias bup='brew upgrade && for cask in $(brew list --cask); do brew info --cask $cask --json=v2 | jq -r "[.casks[].outdated,.casks[].installed,.casks[].version] | @tsv" | read outdated installed current && if [[ "$current" != "$installed" ]]; then echo "Upgrading $cask from $installed to $current"; brew upgrade --cask --greedy $cask; else echo "$cask:$current is latest version"; fi; done'
 alias vl='vault login -method=github token="$VAULT_GITHUB_TOKEN"'
 # Print each PATH entry on a separate line
 alias path='echo -e ${PATH//:/\\n}'
