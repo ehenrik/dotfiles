@@ -40,9 +40,9 @@ alias gup="git up"
 alias gcpa="git cherry-pick --abort"
 alias gcpc="git cherry-pick --continue"
 alias gcps="git cherry-pick --skip"
-alias vl='vault login -method=github token="$VAULT_GITHUB_TOKEN"'
 # Print each PATH entry on a separate line
 alias path='echo -e ${PATH//:/\\n}'
 alias awslocal="aws --endpoint-url http://localhost:4566"
 alias tf="terraform"
+alias tff="terraform fmt --recursive"
 alias cm="chezmoi"
