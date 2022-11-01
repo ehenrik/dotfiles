@@ -24,5 +24,5 @@ users:
           - k8s.mps.plint.app
         env:
           - name: AWS_PROFILE
-            value: plint-mps
+            value: mps-production
         command: aws

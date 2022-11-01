@@ -24,5 +24,5 @@ users:
           - k8s.nrk.plint.app
         env:
           - name: AWS_PROFILE
-            value: plint-nrk
+            value: nrk-production
         command: aws
