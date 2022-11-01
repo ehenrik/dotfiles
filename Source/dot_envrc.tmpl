@@ -1,4 +1,5 @@
 export KOPS_STATE_STORE=s3://724902258495-eu-west-1-kops-storage
+export GITLAB_PRIVATE_TOKEN=${GITLAB_TOKEN}
 export CI_TOKEN=${GITLAB_TOKEN}
 export CI_REGISTRY_USER=git
 export CI_JOB_TOKEN=${GITLAB_TOKEN}
@@ -7,3 +8,4 @@ export NGROK_REGION=eu
 export NGROK_URL=https://usd.eu.ngrok.io
 #export KUBECONFIG="$( set -- ${PWD}/.kube/*.yaml; b=();for x in $*; do [[ ${x} =~ 'kind' ]] && b=(${x} $b[@]) || b=($b[@] ${x}); done; set -- $b[*]; IFS=:; echo "$*" )"
 export KUBECONFIG=$( IFS=:; set -- ${PWD}/.kube/kind*.yaml ${PWD}/.kube/*.yaml; echo "$*" )
+export DOCKER_HOST=unix:///${HOME}/.docker/run/docker.sock
