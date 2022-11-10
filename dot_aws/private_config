@@ -1,9 +1,6 @@
 [plugins]
 endpoint = awscli_plugin_endpoint
 
-[profile unbound]
-region=eu-west-1
-
 [profile local]
 region = eu-west-1
 output = json
