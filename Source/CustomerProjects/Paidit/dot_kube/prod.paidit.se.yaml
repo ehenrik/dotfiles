@@ -22,8 +22,6 @@ users:
       - get-token
       - --cluster-name
       - prod.paidit.se
-      - --role-arn
-      - arn:aws:iam::505676538145:role/KubernetesAdmin
       command: aws
       env:
       - name: AWS_PROFILE
