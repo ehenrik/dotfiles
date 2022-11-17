@@ -22,8 +22,6 @@ users:
       - get-token
       - --cluster-name
       - k8s.unbound.se
-      - --role-arn
-      - arn:aws:iam::724902258495:role/KubernetesAdmin
       command: aws
       env:
       - name: AWS_PROFILE
