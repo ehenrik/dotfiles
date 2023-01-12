@@ -16,8 +16,6 @@ export LC_ALL=en_US.UTF-8
 export EDITOR=vim
 export VISUAL=vim
 export POWERLINE_COMMAND_ARGS=""
-export GOPATH=${HOME}/go
-export GOPRIVATE="gitlab.com/unboundsoftware/shiny"
 export _git_log_oneline_format='%C(green)%h%C(reset) %s%C(red)%d%C(reset)'
 export _git_log_brief_format='%C(green)%h%C(reset) %s%n%C(blue)(%ar by %an)%C(red)%d%C(reset)'
 
@@ -28,8 +26,5 @@ export RABBITMQ_HOST=rabbitmq
 export RABBITMQ_VHOST=""
 export RABBITMQ_USERNAME=admin
 export RABBITMQ_PASSWORD=password
-
-# Temporary workaround for https://github.com/golang/go/issues/49138
-export MallocNanoZone=0
 
 export BASH_ENV=${HOME}/.bashrc
