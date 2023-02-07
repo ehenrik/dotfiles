@@ -95,6 +95,7 @@ bup() {
   fi
 
   echo "Brewfile matches installation, updating packages"
+  brew update
   brew upgrade
   for cask in $(brew list --cask); do
     brew info --cask $cask --json=v2 \
