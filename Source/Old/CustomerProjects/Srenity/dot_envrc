@@ -1,2 +1,0 @@
-source_up .envrc
-export CI_REGISTRY=registry.gitlab.com/srenity1
