@@ -1,4 +1,4 @@
-[".zpresto"]
+[".zprezto"]
   type = "archive"
   url = "https://github.com/sorin-ionescu/prezto/archive/master.tar.gz"
   exact = true
