@@ -157,7 +157,6 @@ brew "rbenv"
 brew "robot-framework", link: false
 brew "rover"
 brew "ruby@2.7"
-brew "saml2aws"
 brew "sbt"
 brew "scala"
 brew "scalariform"
