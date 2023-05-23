@@ -8,3 +8,6 @@ mongodbatlas_public_key    = {{ (index (lastpass "envconfig\\prod/mongodb_atlas_
 gitlab_token               = {{ (index (lastpass "devenv/.auths") 0).note.gitlabDependabotToken | trim | quote }}
 github_token               = {{ (index (lastpass "devenv/.auths") 0).note.githubToken | trim | quote }}
 grafana_cloud_api_key      = {{ (index (lastpass "envconfig\\prod/grafana-cloud") 0).note.adminApiKey | trim | quote }}
+auth0_domain               = {{ (index (lastpass "envconfig\\prod/auth0") 0).note.domain | trim | quote }}
+auth0_client_id            = {{ (index (lastpass "envconfig\\prod/auth0") 0).note.clientId | trim | quote }}
+auth0_client_secret        = {{ (index (lastpass "envconfig\\prod/auth0") 0).note.clientSecret | trim | quote }}
