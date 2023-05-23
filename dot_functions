@@ -45,7 +45,7 @@ _sso() {
         if [ -n "$comp" ]; then
             completions+=${comp}
         fi
-    done < <(grep '^\[.*\]$' ${AWS_CONFIG_FILE:-~/.aws/config} | sed 's/^\[profile \(.*\)\]$/\1/')
+    done < <(grep '^\[profile.*\]$' ${AWS_CONFIG_FILE:-~/.aws/config} | sed 's/^\[profile \(.*\)\]$/\1/')
     IFS=\  compadd $(echo $completions[@])
 }
 
