@@ -1,3 +1,2 @@
 source_up .envrc
 use nvm package.json
-export GRAPHQL_API=http://localhost:4444
