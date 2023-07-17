@@ -5,6 +5,7 @@
 idea
 .idea
 .graphqlconfig
+graphql.config.yml
 federationSchemaExtensions.js
 .envrc
 .buildtools.yaml
