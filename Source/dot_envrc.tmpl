@@ -16,4 +16,4 @@ export NGROK_TOKEN={{ (index (lastpass "devenv/ngrok") 0).note.token -}}
 export NGROK_REGION=eu
 export NGROK_URL=https://usd.eu.ngrok.io
 export KUBECONFIG=$( IFS=:; set -- ${PWD}/.kube/kind*.yaml ${PWD}/.kube/*.yaml; echo "$*" )
-export DOCKER_HOST=unix:///${HOME}/.docker/run/docker.sock
+#export DOCKER_HOST=unix:///${HOME}/.docker/run/docker.sock
