@@ -49,6 +49,7 @@ autoload -Uz compinit && compinit -i
 source "$HOMEBREW_PREFIX/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
 source "$HOMEBREW_PREFIX/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
 source <(stern --completion zsh)
+source <(docker completion zsh)
 source <(kubectl completion zsh)
 source <(kops completion zsh)
 source <(kind completion zsh)
