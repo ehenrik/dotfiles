@@ -34,7 +34,6 @@ brew "autoconf"
 brew "automake"
 brew "xz"
 brew "awk", link: false
-brew "aws-iam-authenticator"
 brew "gdbm"
 brew "readline"
 brew "sqlite"
