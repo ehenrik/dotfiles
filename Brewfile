@@ -32,6 +32,7 @@ brew "webp"
 brew "argocd"
 brew "autoconf"
 brew "automake"
+brew "aws-sso-cli"
 brew "xz"
 brew "awk", link: false
 brew "gdbm"
