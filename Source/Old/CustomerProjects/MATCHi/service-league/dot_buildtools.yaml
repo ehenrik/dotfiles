@@ -1,8 +1,0 @@
-targets:
-  test:
-    context: league-test
-    namespace: league
-  prod:
-    context: league-prod
-    namespace: league
-

@@ -1,5 +1,0 @@
-targets:
-  test:
-    context: kind-jocke
-    namespace: default
-

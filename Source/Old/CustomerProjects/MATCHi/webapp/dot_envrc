@@ -1,2 +1,0 @@
-source_up .envrc
-export JAVA_OPTS=-Xmx2048m

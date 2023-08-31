@@ -1,2 +1,0 @@
-source_up .envrc
-unset GITHUB_TOKEN

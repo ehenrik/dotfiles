@@ -1,4 +1,0 @@
-source_up .envrc
-use nvm package.json
-export GRAPHQL_API=http://localhost:6080/query
-

@@ -1,8 +1,0 @@
-
-[profile paidit]
-sso_start_url = https://paidit.awsapps.com/start/
-sso_region = eu-central-1
-region = eu-central-1
-sso_account_id = 505676538145
-sso_role_name = AWSAdministratorAccess
-output = json

@@ -1,8 +1,0 @@
-
-[profile unbound]
-sso_start_url = https://usd.awsapps.com/start/
-sso_region = eu-west-1
-region = eu-west-1
-sso_account_id = 724902258495
-sso_role_name = AWSAdministratorAccess
-output = json

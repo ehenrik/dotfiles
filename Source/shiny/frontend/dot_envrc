@@ -1,2 +1,0 @@
-source_up .envrc
-use nvm package.json

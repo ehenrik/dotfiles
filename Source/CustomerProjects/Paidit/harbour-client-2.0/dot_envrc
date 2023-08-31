@@ -1,4 +1,0 @@
-source_up .envrc
-use nvm
-export PORT=3002
-export BROWSER=none

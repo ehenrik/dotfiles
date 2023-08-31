@@ -1,6 +1,0 @@
-source_up .envrc
-export IDF_TOOLS_PATH=~/Source/esp32/idf_tools
-export IDF_PATH=~/Source/esp32/esp-idf
-export PATH=${IDF_TOOLS_PATH}/xtensa-esp32-elf/bin:${PATH}
-alias python=/usr/local/bin/python3
-alias pip=/usr/local/bin/pip3
