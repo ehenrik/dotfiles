@@ -25,9 +25,9 @@ sudo softwareupdate --install-rosetta
 ```bash
 brew install chezmoi
 brew install lastpass-cli
-lpass login joakim@unbound.se
+lpass login henrik.engman@me.com
 ```
 
 ```bash
-chezmoi init --apply henrikengman
+chezmoi init --apply ehenrik
 ```
