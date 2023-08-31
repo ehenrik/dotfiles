@@ -1,23 +1,7 @@
 Include ~/.orbstack/ssh/config
 Include config.d/*
 
-Host *.k8s.unbound.se
-  IdentityFile /Users/henrikengman/.ssh/id_rsa
-  User admin
-
-Host gitlab.com
-  User git
-
-Host homeassistant.local
-  User root
-  Port 2222
-
-Host *
-  User ubuntu
-  StrictHostKeyChecking no
-  ServerAliveInterval 30
-  ForwardAgent yes
-  UseKeychain yes
-  AddKeysToAgent yes
-  IdentityFile ~/.ssh/id_rsa
-
+Host github.com
+  Hostname github.com
+  User ehenrik
+  IdentityFile ~/.ssh/github-me
