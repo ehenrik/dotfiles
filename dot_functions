@@ -109,3 +109,22 @@ bup() {
     fi
   done
 }
+
+
+git_cleanup(){
+  git branch --merged | egrep -v "(^\*|main|master|development)" | xargs git branch -d
+}
+
+open_tunnel() {
+  if [ $# -eq 5 ];
+  then
+    ssh -L $1:$2:$3 $4@$5
+  else
+    echo "requires 5 params: localport remoteip remoteport jumpuser jumphost";
+    echo "$2";
+  fi
+}
+
+check_space() {
+  du -scxh $1 | sort -h
+}
