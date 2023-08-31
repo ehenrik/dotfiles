@@ -1,9 +1,9 @@
 {
   "Profiles": [
     {
-      "Working Directory": "\/Users\/argoyle",
+      "Working Directory": "\/Users\/henrikengman",
       "Prompt Before Closing 2": 0,
-      "Dynamic Profile Filename": "\/Users\/argoyle\/Library\/Application Support\/iTerm2\/DynamicProfiles\/profiles.json",
+      "Dynamic Profile Filename": "\/Users\/henrikengman\/Library\/Application Support\/iTerm2\/DynamicProfiles\/profiles.json",
       "Selected Text Color": {
         "Red Component": 0.6705882352941176,
         "Color Space": "sRGB",

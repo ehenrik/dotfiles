@@ -13,5 +13,5 @@ Host orb
   User default
   IdentityFile ~/.orbstack/ssh/id_ed25519 # replace or symlink ~/.orbstack/ssh/id_ed25519 file to change the key
   IdentitiesOnly yes # only use this key
-  ProxyCommand '/Applications/OrbStack.app/Contents/Frameworks/OrbStack Helper (VM).app/Contents/MacOS/OrbStack Helper (VM)' ssh-proxy-fdpass /Users/argoyle
+  ProxyCommand '/Applications/OrbStack.app/Contents/Frameworks/OrbStack Helper (VM).app/Contents/MacOS/OrbStack Helper (VM)' ssh-proxy-fdpass /Users/henrikengman
   ProxyUseFdpass yes
