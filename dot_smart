@@ -32,5 +32,3 @@ ${AWS_CONFIG_FILE:-~/.aws/config} | sed 's/^\[profile
 \(.*\)\]$/\1/')
     IFS=\  compadd $(echo $completions[@])
 }
-
-compdef _sso sso
