@@ -5,3 +5,9 @@ Host github.com
   Hostname github.com
   User ehenrik
   IdentityFile ~/.ssh/github-me
+
+Host bitbucket.org
+  Hostname bitbucket.org
+  User e-henrik.engman@smart.com
+  IdentityFile ~/.ssh/ismart
+
