@@ -1,0 +1,345 @@
+Index: src/scratchpads.manager.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import * as fs from 'fs';\r\nimport * as path from 'path';\r\nimport * as vscode from 'vscode';\r\nimport { window } from 'vscode';\r\nimport { Config } from './config';\r\nimport {\r\n  CONFIG_AUTO_FORMAT,\r\n  CONFIG_AUTO_PASTE,\r\n  CONFIG_PROMPT_FOR_FILENAME,\r\n  CONFIG_PROMPT_FOR_REMOVAL,\r\n  FILE_NAME_TEMPLATE,\r\n} from './consts';\r\nimport { FiletypesManager } from './filetypes.manager';\r\nimport Utils from './utils';\r\n\r\nexport class ScratchpadsManager {\r\n  private filetypeManager: FiletypesManager;\r\n\r\n  constructor(ftm: FiletypesManager) {\r\n    this.filetypeManager = ftm;\r\n  }\r\n\r\n  /**\r\n   * Create a new scratchpad file\r\n   * If file name exists increment counter until a new file can be created\r\n   */\r\n  public async createScratchpad() {\r\n    const filetype = await this.filetypeManager.selectFiletype();\r\n\r\n    if (filetype) {\r\n      let i = 0;\r\n      let baseFilename = FILE_NAME_TEMPLATE;\r\n      const isPromptForFilename = Config.getExtensionConfiguration(CONFIG_PROMPT_FOR_FILENAME);\r\n\r\n      if (isPromptForFilename) {\r\n        const filenameFromUser = await window.showInputBox({ placeHolder: 'Enter a filename:' });\r\n\r\n        if (filenameFromUser) {\r\n          baseFilename = filenameFromUser;\r\n        }\r\n      }\r\n\r\n      let finalFilename = `${baseFilename}${filetype.ext}`;\r\n      let fullPath = path.join(Config.projectScratchpadsPath, finalFilename);\r\n\r\n      // Find an available filename\r\n      while (fs.existsSync(fullPath)) {\r\n        i = i + 1;\r\n        finalFilename = `${baseFilename}${i}${filetype.ext}`;\r\n        fullPath = path.join(Config.projectScratchpadsPath, finalFilename);\r\n      }\r\n\r\n      const isAutoPaste = Config.getExtensionConfiguration(CONFIG_AUTO_PASTE);\r\n      const isAutoFormat = Config.getExtensionConfiguration(CONFIG_AUTO_FORMAT);\r\n      const data = isAutoPaste ? await vscode.env.clipboard.readText() : '';\r\n\r\n      fs.writeFileSync(fullPath, data);\r\n\r\n      const doc = await vscode.workspace.openTextDocument(fullPath);\r\n      window.showTextDocument(doc);\r\n\r\n      if (isAutoPaste && isAutoFormat) {\r\n        await this.autoFormatDoc(doc);\r\n      }\r\n    }\r\n  }\r\n\r\n  /**\r\n   * Re-open a scratchpad file\r\n   */\r\n  public async openScratchpad() {\r\n    const files = fs.readdirSync(Config.projectScratchpadsPath);\r\n\r\n    if (!files.length) {\r\n      window.showInformationMessage('No scratchpads to open');\r\n      return;\r\n    }\r\n\r\n    const selection = await window.showQuickPick(files);\r\n    if (!selection) {\r\n      return;\r\n    }\r\n\r\n    const filePath = path.join(Config.projectScratchpadsPath, selection);\r\n\r\n    if (fs.existsSync(filePath)) {\r\n      const doc = await vscode.workspace.openTextDocument(filePath);\r\n      vscode.window.showTextDocument(doc, vscode.ViewColumn.One, false);\r\n    }\r\n  }\r\n\r\n  /**\r\n   * Remove a single scratchpad file\r\n   */\r\n  public async removeScratchpad() {\r\n    const files = fs.readdirSync(Config.projectScratchpadsPath);\r\n\r\n    if (!files.length) {\r\n      window.showInformationMessage('No scratchpads to delete');\r\n      return;\r\n    }\r\n\r\n    const selection = await window.showQuickPick(files);\r\n    if (!selection) {\r\n      return;\r\n    }\r\n\r\n    const filePath = path.join(Config.projectScratchpadsPath, selection);\r\n    fs.unlinkSync(filePath);\r\n\r\n    window.showInformationMessage(`Removed ${selection}`);\r\n  }\r\n\r\n  /**\r\n   * Remove all scratchpad files\r\n   */\r\n  public async removeAllScratchpads() {\r\n    if (await this.confirmRemoval()) {\r\n      await this.closeTabs();\r\n      this.deleteScratchpadFiles();\r\n    }\r\n  }\r\n\r\n  /**\r\n   * Automatically format the text inside the given document\r\n   * @param doc the document to format\r\n   */\r\n  private async autoFormatDoc(doc: vscode.TextDocument) {\r\n    const docUri = doc.uri;\r\n    const edit = new vscode.WorkspaceEdit();\r\n    const textEdits = (await vscode.commands.executeCommand(\r\n      'vscode.executeFormatDocumentProvider',\r\n      docUri,\r\n    )) as vscode.TextEdit[];\r\n\r\n    for (const textEdit of textEdits) {\r\n      edit.replace(docUri, textEdit.range, textEdit.newText);\r\n    }\r\n\r\n    await vscode.workspace.applyEdit(edit);\r\n  }\r\n\r\n  /**\r\n   * Check if we should prompt the user for confirmation before removing scratchpads.\r\n   * If the user previously clicked on \"Always\" no need to prompt, and we can go ahead and remote them.\r\n   */\r\n  private async confirmRemoval() {\r\n    const isPromptForRemoval = Config.getExtensionConfiguration(CONFIG_PROMPT_FOR_REMOVAL);\r\n\r\n    if (isPromptForRemoval === undefined || isPromptForRemoval) {\r\n      const answer = await window.showWarningMessage(\r\n        'Are you sure you want to remove all scratchpads?',\r\n        { modal: true },\r\n        'Yes',\r\n        'Always',\r\n      );\r\n\r\n      if (answer === undefined) {\r\n        return false;\r\n      }\r\n\r\n      if (answer === 'Always') {\r\n        Config.setExtensionConfiguration(CONFIG_PROMPT_FOR_REMOVAL, false);\r\n      }\r\n    }\r\n\r\n    return true;\r\n  }\r\n\r\n  /**\r\n   * Checks if the given tab is holding a scratchpad document\r\n   *\r\n   * @param {TextEditor} editor The tab to inspect\r\n   */\r\n  private isScratchpadEditor(editor?: vscode.TextEditor) {\r\n    if (editor) {\r\n      const editorPath = path.dirname(editor.document.fileName);\r\n      return editorPath === Config.projectScratchpadsPath;\r\n    }\r\n\r\n    return false;\r\n  }\r\n\r\n  /**\r\n   * Close all open tabs which edit a scratchpad document.\r\n   * Use a \"hack\" which uses workbench actions (closeActiveEditor and nextEditor)\r\n   * since there is no access to open tabs.\r\n   */\r\n  private async closeTabs() {\r\n    let initial = window.activeTextEditor;\r\n    let curr;\r\n\r\n    while (initial && this.isScratchpadEditor(initial)) {\r\n      // Started with a scratchpad tab\r\n      // Close tab until it is not longer a scratchpad tab\r\n      console.log('initial is a scratchpad: ' + initial.document.fileName);\r\n\r\n      await Utils.closeActiveEditor();\r\n      initial = window.activeTextEditor;\r\n    }\r\n\r\n    if (initial) {\r\n      console.log('initial editor: ' + initial.document.fileName);\r\n\r\n      while (initial.document !== curr?.document) {\r\n        // Iterate over open tabs and close scratchpad tabs until we're back to the initial tab\r\n        if (this.isScratchpadEditor(window.activeTextEditor)) {\r\n          await Utils.closeActiveEditor();\r\n        }\r\n\r\n        await Utils.nextEditor();\r\n\r\n        curr = window.activeTextEditor;\r\n      }\r\n\r\n      console.log('Back to initial tab. Stopping operation...');\r\n    } else {\r\n      console.log('No open tabs');\r\n    }\r\n  }\r\n\r\n  /**\r\n   * Delete the scratchpad files from the project's scratchpads folder.\r\n   */\r\n  private deleteScratchpadFiles() {\r\n    console.log('Deleting scratchpad files');\r\n\r\n    const files = fs.readdirSync(Config.projectScratchpadsPath);\r\n\r\n    for (let i = 0, len = files.length; i < len; i++) {\r\n      fs.unlinkSync(path.join(Config.projectScratchpadsPath, files[i]));\r\n    }\r\n\r\n    window.showInformationMessage('Removed all scratchpads');\r\n  }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/scratchpads.manager.ts b/src/scratchpads.manager.ts
+--- a/src/scratchpads.manager.ts	(revision ad2807873bc58b17b8c1f0e90af544105bbcb557)
++++ b/src/scratchpads.manager.ts	(date 1663136538526)
+@@ -10,7 +10,7 @@
+   CONFIG_PROMPT_FOR_REMOVAL,
+   FILE_NAME_TEMPLATE,
+ } from './consts';
+-import { FiletypesManager } from './filetypes.manager';
++import { Filetype, FiletypesManager } from './filetypes.manager';
+ import Utils from './utils';
+ 
+ export class ScratchpadsManager {
+@@ -24,8 +24,10 @@
+    * Create a new scratchpad file
+    * If file name exists increment counter until a new file can be created
+    */
+-  public async createScratchpad() {
+-    const filetype = await this.filetypeManager.selectFiletype();
++  public async createScratchpad(filetype?: Filetype) {
++    if (!filetype) {
++      filetype = await this.filetypeManager.selectFiletype();
++    }
+ 
+     if (filetype) {
+       let i = 0;
+@@ -33,7 +35,9 @@
+       const isPromptForFilename = Config.getExtensionConfiguration(CONFIG_PROMPT_FOR_FILENAME);
+ 
+       if (isPromptForFilename) {
+-        const filenameFromUser = await window.showInputBox({ placeHolder: 'Enter a filename:' });
++        const filenameFromUser = await window.showInputBox({
++          placeHolder: 'Enter a filename:',
++        });
+ 
+         if (filenameFromUser) {
+           baseFilename = filenameFromUser;
+@@ -121,6 +125,14 @@
+     }
+   }
+ 
++  /**
++   * Add a new Filetype
++   */
++  public async newFiletype() {
++    const newFileType = await this.filetypeManager.newFiletype();
++    newFileType && (await this.createScratchpad(newFileType));
++  }
++
+   /**
+    * Automatically format the text inside the given document
+    * @param doc the document to format
+@@ -133,11 +145,13 @@
+       docUri,
+     )) as vscode.TextEdit[];
+ 
+-    for (const textEdit of textEdits) {
+-      edit.replace(docUri, textEdit.range, textEdit.newText);
+-    }
++    if (textEdits) {
++      for (const textEdit of textEdits) {
++        edit.replace(docUri, textEdit.range, textEdit.newText);
++      }
+ 
+-    await vscode.workspace.applyEdit(edit);
++      await vscode.workspace.applyEdit(edit);
++    }
+   }
+ 
+   /**
+Index: src/config.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import * as path from 'path';\r\nimport { Md5 } from 'ts-md5';\r\nimport * as vscode from 'vscode';\r\nimport { CONFIG_SCRATCHPADS_FOLDER, SCRATCHPADS_FOLDER_NAME } from './consts';\r\n\r\nexport class Config {\r\n  public static context: vscode.ExtensionContext;\r\n  public static extensionConfig: vscode.WorkspaceConfiguration;\r\n\r\n  public static globalPath: string;\r\n  public static customPath: string;\r\n  public static scratchpadsRootPath: string;\r\n  public static projectPathMD5: string;\r\n  public static projectScratchpadsPath: string;\r\n\r\n  public static init(context: vscode.ExtensionContext) {\r\n    this.context = context;\r\n    this.extensionConfig = vscode.workspace.getConfiguration('scratchpads');\r\n    this.projectPathMD5 = Md5.hashStr(vscode.env.appRoot);\r\n    this.globalPath = context.globalStorageUri.fsPath;\r\n    this.recalculateProjectScratchpadsPath();\r\n  }\r\n\r\n  public static recalculateProjectScratchpadsPath() {\r\n    this.customPath = this.getExtensionConfiguration(CONFIG_SCRATCHPADS_FOLDER) as string;\r\n\r\n    this.scratchpadsRootPath = path.join(this.customPath || this.globalPath, SCRATCHPADS_FOLDER_NAME);\r\n    this.projectScratchpadsPath = path.join(this.scratchpadsRootPath, this.projectPathMD5);\r\n  }\r\n\r\n  /**\r\n   * Get the extension configuration (exposed in package.json) for the given key\r\n   * @param key\r\n   */\r\n  public static getExtensionConfiguration(key: string) {\r\n    const config = this.extensionConfig.inspect(key);\r\n    return config?.globalValue !== undefined ? config.globalValue : config?.defaultValue;\r\n  }\r\n\r\n  /**\r\n   * Set an extension configuration based on the given key and value.\r\n   * The configuration will be saved on the global target.\r\n   * @param key\r\n   * @param value\r\n   */\r\n  public static setExtensionConfiguration(key: string, value: any) {\r\n    this.extensionConfig.update(key, value, true);\r\n  }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/config.ts b/src/config.ts
+--- a/src/config.ts	(revision ad2807873bc58b17b8c1f0e90af544105bbcb557)
++++ b/src/config.ts	(date 1663136538526)
+@@ -1,7 +1,7 @@
+ import * as path from 'path';
+ import { Md5 } from 'ts-md5';
+ import * as vscode from 'vscode';
+-import { CONFIG_SCRATCHPADS_FOLDER, SCRATCHPADS_FOLDER_NAME } from './consts';
++import { CONFIG_SCRATCHPADS_FOLDER, RECENT_FILETYPES_FILE, SCRATCHPADS_FOLDER_NAME } from './consts';
+ 
+ export class Config {
+   public static context: vscode.ExtensionContext;
+@@ -12,20 +12,22 @@
+   public static scratchpadsRootPath: string;
+   public static projectPathMD5: string;
+   public static projectScratchpadsPath: string;
++  public static recentFiletypesFilePath: string;
+ 
+   public static init(context: vscode.ExtensionContext) {
+     this.context = context;
+     this.extensionConfig = vscode.workspace.getConfiguration('scratchpads');
+     this.projectPathMD5 = Md5.hashStr(vscode.env.appRoot);
+     this.globalPath = context.globalStorageUri.fsPath;
+-    this.recalculateProjectScratchpadsPath();
++    this.recalculatePaths();
+   }
+ 
+-  public static recalculateProjectScratchpadsPath() {
++  public static recalculatePaths() {
+     this.customPath = this.getExtensionConfiguration(CONFIG_SCRATCHPADS_FOLDER) as string;
+ 
+     this.scratchpadsRootPath = path.join(this.customPath || this.globalPath, SCRATCHPADS_FOLDER_NAME);
+     this.projectScratchpadsPath = path.join(this.scratchpadsRootPath, this.projectPathMD5);
++    this.recentFiletypesFilePath = path.join(this.scratchpadsRootPath, RECENT_FILETYPES_FILE);
+   }
+ 
+   /**
+Index: package.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\r\n  \"name\": \"scratchpads\",\r\n  \"displayName\": \"Scratchpads\",\r\n  \"description\": \"Create multiple scratchpad files of different file types\",\r\n  \"version\": \"0.0.8\",\r\n  \"publisher\": \"buenon\",\r\n  \"author\": {\r\n    \"name\": \"Nadav Bueno\",\r\n    \"email\": \"buenonadav@gmail.com\"\r\n  },\r\n  \"license\": \"MIT\",\r\n  \"homepage\": \"https://github.com/buenon/scratchpads/blob/master/README.md\",\r\n  \"repository\": {\r\n    \"type\": \"git\",\r\n    \"url\": \"https://github.com/buenon/scratchpads\"\r\n  },\r\n  \"icon\": \"images/icon.png\",\r\n  \"engines\": {\r\n    \"vscode\": \"^1.70.0\"\r\n  },\r\n  \"categories\": [\r\n    \"Other\"\r\n  ],\r\n  \"activationEvents\": [\r\n    \"onCommand:scratchpads.newScratchpad\",\r\n    \"onCommand:scratchpads.removeScratchpad\",\r\n    \"onCommand:scratchpads.removeAllScratchpads\",\r\n    \"onCommand:scratchpads.openScratchpad\"\r\n  ],\r\n  \"main\": \"./dist/extension.js\",\r\n  \"contributes\": {\r\n    \"configuration\": {\r\n      \"type\": \"object\",\r\n      \"title\": \"Scratchpads\",\r\n      \"properties\": {\r\n        \"scratchpads.scratchpadsFolder\": {\r\n          \"type\": \"string\",\r\n          \"description\": \"A custom full path in which the scratchpads will be stored (leave empty for global extension folder)\"\r\n        },\r\n        \"scratchpads.promptForRemoval\": {\r\n          \"type\": \"boolean\",\r\n          \"default\": true,\r\n          \"description\": \"Prompt the user when removing scratchpads\"\r\n        },\r\n        \"scratchpads.promptForFilename\": {\r\n          \"type\": \"boolean\",\r\n          \"default\": false,\r\n          \"description\": \"Prompt the user for a file name when creating a new scratchpad\"\r\n        },\r\n        \"scratchpads.autoPaste\": {\r\n          \"type\": \"boolean\",\r\n          \"default\": true,\r\n          \"description\": \"Automatically paste clipboard content into the new scratchpad\"\r\n        },\r\n        \"scratchpads.autoFormat\": {\r\n          \"type\": \"boolean\",\r\n          \"default\": true,\r\n          \"description\": \"Automatically format the new scratchpad content (works only if auto paste is on)\"\r\n        }\r\n      }\r\n    },\r\n    \"commands\": [\r\n      {\r\n        \"command\": \"scratchpads.newScratchpad\",\r\n        \"title\": \"Scratchpads: New scratchpad\"\r\n      },\r\n      {\r\n        \"command\": \"scratchpads.removeScratchpad\",\r\n        \"title\": \"Scratchpads: Remove a scratchpad\"\r\n      },\r\n      {\r\n        \"command\": \"scratchpads.removeAllScratchpads\",\r\n        \"title\": \"Scratchpads: Remove all scratchpads\"\r\n      },\r\n      {\r\n        \"command\": \"scratchpads.openScratchpad\",\r\n        \"title\": \"Scratchpads: Open scratchpad\"\r\n      }\r\n    ]\r\n  },\r\n  \"scripts\": {\r\n    \"vscode:prepublish\": \"npm run package\",\r\n    \"compile\": \"webpack\",\r\n    \"watch\": \"webpack --watch\",\r\n    \"package\": \"webpack --mode production --devtool hidden-source-map\",\r\n    \"compile-tests\": \"tsc -p . --outDir out\",\r\n    \"watch-tests\": \"tsc -p . -w --outDir out\",\r\n    \"pretest\": \"npm run compile-tests && npm run compile && npm run lint\",\r\n    \"lint\": \"eslint src --ext ts\",\r\n    \"test\": \"node ./out/test/runTest.js\"\r\n  },\r\n  \"dependencies\": {\r\n    \"language-map\": \"^1.5.0\",\r\n    \"ts-md5\": \"^1.3.1\"\r\n  },\r\n  \"devDependencies\": {\r\n    \"@types/glob\": \"^7.2.0\",\r\n    \"@types/mocha\": \"^9.1.1\",\r\n    \"@types/node\": \"16.x\",\r\n    \"@types/vscode\": \"^1.70.0\",\r\n    \"@typescript-eslint/eslint-plugin\": \"^5.31.0\",\r\n    \"@typescript-eslint/parser\": \"^5.31.0\",\r\n    \"@vscode/test-electron\": \"^2.1.5\",\r\n    \"eslint\": \"^8.20.0\",\r\n    \"eslint-config-prettier\": \"^8.5.0\",\r\n    \"eslint-plugin-prettier\": \"^4.2.1\",\r\n    \"glob\": \"^8.0.3\",\r\n    \"mocha\": \"^10.0.0\",\r\n    \"prettier\": \"^2.7.1\",\r\n    \"ts-loader\": \"^9.3.1\",\r\n    \"typescript\": \"^4.7.4\",\r\n    \"webpack\": \"^5.74.0\",\r\n    \"webpack-cli\": \"^4.10.0\"\r\n  }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/package.json b/package.json
+--- a/package.json	(revision ad2807873bc58b17b8c1f0e90af544105bbcb557)
++++ b/package.json	(date 1663358882110)
+@@ -25,7 +25,8 @@
+     "onCommand:scratchpads.newScratchpad",
+     "onCommand:scratchpads.removeScratchpad",
+     "onCommand:scratchpads.removeAllScratchpads",
+-    "onCommand:scratchpads.openScratchpad"
++    "onCommand:scratchpads.openScratchpad",
++    "onCommand:scratchpads.newFiletype"
+   ],
+   "main": "./dist/extension.js",
+   "contributes": {
+@@ -35,12 +36,12 @@
+       "properties": {
+         "scratchpads.scratchpadsFolder": {
+           "type": "string",
+-          "description": "A custom full path in which the scratchpads will be stored (leave empty for global extension folder)"
++          "description": "A custom full path in which the scratchpads will be stored (Note: Data will not be moved)."
+         },
+         "scratchpads.promptForRemoval": {
+           "type": "boolean",
+           "default": true,
+-          "description": "Prompt the user when removing scratchpads"
++          "description": "Prompt the user when removing all scratchpads"
+         },
+         "scratchpads.promptForFilename": {
+           "type": "boolean",
+@@ -75,6 +76,10 @@
+       {
+         "command": "scratchpads.openScratchpad",
+         "title": "Scratchpads: Open scratchpad"
++      },
++      {
++        "command": "scratchpads.newFiletype",
++        "title": "Scratchpads: New filetype"
+       }
+     ]
+   },
+Index: src/consts.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>export const SCRATCHPADS_FOLDER_NAME = 'scratchpads';\r\nexport const FILE_NAME_TEMPLATE = 'scratch';\r\nexport const RECENT_FILE_TYPES_STATE = 'recentFiletypesState';\r\nexport const ACTIONS_TIMEOUT = 200; // Need to pause a bit when changing or closing the active tab\r\n\r\n// Configuration constants\r\nexport const CONFIG_SCRATCHPADS_FOLDER = 'scratchpadsFolder';\r\nexport const CONFIG_PROMPT_FOR_REMOVAL = 'promptForRemoval';\r\nexport const CONFIG_PROMPT_FOR_FILENAME = 'promptForFilename';\r\nexport const CONFIG_AUTO_PASTE = 'autoPaste';\r\nexport const CONFIG_AUTO_FORMAT = 'autoFormat';\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/consts.ts b/src/consts.ts
+--- a/src/consts.ts	(revision ad2807873bc58b17b8c1f0e90af544105bbcb557)
++++ b/src/consts.ts	(date 1663136538526)
+@@ -1,7 +1,7 @@
+ export const SCRATCHPADS_FOLDER_NAME = 'scratchpads';
+ export const FILE_NAME_TEMPLATE = 'scratch';
+-export const RECENT_FILE_TYPES_STATE = 'recentFiletypesState';
+ export const ACTIONS_TIMEOUT = 200; // Need to pause a bit when changing or closing the active tab
++export const RECENT_FILETYPES_FILE = 'recentFiletypes.json';
+ 
+ // Configuration constants
+ export const CONFIG_SCRATCHPADS_FOLDER = 'scratchpadsFolder';
+Index: src/extension.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import * as vscode from 'vscode';\r\nimport {Config} from './config';\r\nimport {FiletypesManager} from './filetypes.manager';\r\nimport {ScratchpadsManager} from './scratchpads.manager';\r\nimport Utils from './utils';\r\n\r\n/**\r\n * This method is called when the extension is activated\r\n * Good place for initialization.\r\n */\r\nexport function activate(context: vscode.ExtensionContext) {\r\n  Config.init(context);\r\n\r\n  const scratchpadsManager = new ScratchpadsManager(new FiletypesManager());\r\n\r\n  const commands: { [key: string]: (...args: any[]) => any } = {\r\n    'scratchpads.newScratchpad': () => Utils.confirmFolder() && scratchpadsManager.createScratchpad(),\r\n    'scratchpads.openScratchpad': () => Utils.confirmFolder() && scratchpadsManager.openScratchpad(),\r\n    'scratchpads.removeAllScratchpads': () => Utils.confirmFolder() && scratchpadsManager.removeAllScratchpads(),\r\n    'scratchpads.removeScratchpad': () => Utils.confirmFolder() && scratchpadsManager.removeScratchpad(),\r\n  };\r\n\r\n  for (const command in commands) {\r\n    const cmd = vscode.commands.registerCommand(command, commands[command]);\r\n    context.subscriptions.push(cmd);\r\n  }\r\n\r\n  vscode.workspace.onDidChangeConfiguration((event) => {\r\n    const affected = event.affectsConfiguration('scratchpads.scratchpadsFolder');\r\n\r\n    if (affected) {\r\n      Config.recalculateProjectScratchpadsPath();\r\n    }\r\n  });\r\n}\r\n\r\n/**\r\n * This method is called when the extension is deactivated.\r\n * Good place for cleanups.\r\n */\r\nexport function deactivate() {}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/extension.ts b/src/extension.ts
+--- a/src/extension.ts	(revision ad2807873bc58b17b8c1f0e90af544105bbcb557)
++++ b/src/extension.ts	(date 1663136538526)
+@@ -18,6 +18,7 @@
+     'scratchpads.openScratchpad': () => Utils.confirmFolder() && scratchpadsManager.openScratchpad(),
+     'scratchpads.removeAllScratchpads': () => Utils.confirmFolder() && scratchpadsManager.removeAllScratchpads(),
+     'scratchpads.removeScratchpad': () => Utils.confirmFolder() && scratchpadsManager.removeScratchpad(),
++    'scratchpads.newFiletype': () => Utils.confirmFolder() && scratchpadsManager.newFiletype(),
+   };
+ 
+   for (const command in commands) {
+@@ -29,7 +30,7 @@
+     const affected = event.affectsConfiguration('scratchpads.scratchpadsFolder');
+ 
+     if (affected) {
+-      Config.recalculateProjectScratchpadsPath();
++      Config.recalculatePaths();
+     }
+   });
+ }
+Index: src/filetypes.manager.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import * as vscode from 'vscode';\r\nimport { window } from 'vscode';\r\nimport { Config } from './config';\r\nimport { RECENT_FILE_TYPES_STATE } from './consts';\r\n\r\nexport interface Filetype {\r\n  name: string;\r\n  ext: string;\r\n}\r\n\r\nexport interface FiletypeQuickPickItem extends vscode.QuickPickItem {\r\n  type?: Filetype;\r\n}\r\n\r\nexport class FiletypesManager {\r\n  private recentFiletypes: Filetype[];\r\n  private mainFiletypes: Filetype[];\r\n  private additionalFiletypes: Filetype[];\r\n  private filetypeItems: FiletypeQuickPickItem[];\r\n  private isFiletypeItemsDirty: boolean = false;\r\n\r\n  constructor() {\r\n    this.recentFiletypes = Config.context.globalState.get(RECENT_FILE_TYPES_STATE) || [];\r\n    this.mainFiletypes = [];\r\n    this.additionalFiletypes = [];\r\n    this.filetypeItems = [];\r\n\r\n    this.loadFiletypes();\r\n  }\r\n\r\n  /**\r\n   * Select the type of the scratchpad file\r\n   */\r\n  public async selectFiletype(): Promise<Filetype | undefined> {\r\n    this.prepareItems();\r\n\r\n    const selection = await window.showQuickPick(this.filetypeItems);\r\n\r\n    if (!selection?.type) {\r\n      return;\r\n    }\r\n\r\n    this.addTypeToRecentFiletypes(selection.type);\r\n    return selection.type;\r\n  }\r\n\r\n  /**\r\n   * Load the file types based on https://github.com/blakeembrey/language-map\r\n   */\r\n  private loadFiletypes() {\r\n    const langMap: Record<string, any> = require('language-map');\r\n\r\n    for (const [name, data] of Object.entries(langMap)) {\r\n      if (data.extensions) {\r\n        this.mainFiletypes.push({\r\n          name,\r\n          ext: data.extensions.shift(),\r\n        });\r\n\r\n        for (const ext of data.extensions) {\r\n          // Skip extensions with multiple dots (E.G. .rest.txt)\r\n          if (ext.lastIndexOf('.') > 0) {\r\n            continue;\r\n          }\r\n\r\n          const name = ext.substring(1).toUpperCase();\r\n          this.additionalFiletypes.push({\r\n            name,\r\n            ext,\r\n          });\r\n        }\r\n      }\r\n    }\r\n\r\n    // Remove duplicate extensions from additionalFiletypes\r\n    this.additionalFiletypes = this.additionalFiletypes.reduce((newArray: Filetype[], currentType) => {\r\n      const found =\r\n        this.mainFiletypes.find((type) => type.ext === currentType.ext) ||\r\n        newArray.find((type) => type.ext === currentType.ext);\r\n\r\n      if (!found) {\r\n        newArray.push(currentType);\r\n      }\r\n\r\n      return newArray;\r\n    }, []);\r\n\r\n    this.mainFiletypes.sort(this.filetypesCompareFn);\r\n    this.additionalFiletypes.sort(this.filetypesCompareFn);\r\n  }\r\n\r\n  /**\r\n   * Make sure the file type items are up to date and ordered correctly\r\n   */\r\n  private prepareItems() {\r\n    if (!this.filetypeItems.length || this.isFiletypeItemsDirty) {\r\n      this.filetypeItems = [];\r\n      this.addFiletypeOptionsToSection('Recent', this.recentFiletypes);\r\n      this.addFiletypeOptionsToSection('File types', [\r\n        ...this.filterOutRecentFiletypes(this.mainFiletypes),\r\n        ...this.filterOutRecentFiletypes(this.additionalFiletypes),\r\n      ]);\r\n\r\n      this.isFiletypeItemsDirty = false;\r\n    }\r\n  }\r\n\r\n  /**\r\n   * Compare function for sorting file types array (used in sort())\r\n   * @param a The first element for comparison.\r\n   * @param b The second element for comparison.\r\n   * @returns '-1/0/1' based on the extension string\r\n   */\r\n  private filetypesCompareFn(a: Filetype, b: Filetype) {\r\n    return a.name.toLowerCase().localeCompare(b.name.toLowerCase());\r\n  }\r\n\r\n  /**\r\n   * Add the given file type to the recent array\r\n   * @param {object} typeToAdd\r\n   */\r\n  private addTypeToRecentFiletypes(typeToAdd: Filetype) {\r\n    if (!this.recentFiletypes.length || this.recentFiletypes[0].ext !== typeToAdd.ext) {\r\n      this.recentFiletypes = this.recentFiletypes.filter((type) => {\r\n        return type.ext !== typeToAdd.ext;\r\n      });\r\n\r\n      this.recentFiletypes.unshift(typeToAdd);\r\n      Config.context.globalState.update(RECENT_FILE_TYPES_STATE, this.recentFiletypes);\r\n      this.isFiletypeItemsDirty = true;\r\n    }\r\n  }\r\n\r\n  /**\r\n   * Add an array of file types to the filetypesOptions to be used in QuickPick.\r\n   * It will also add a QuickPickItemKind.Separator with the given title\r\n   * @param sectionTitle The title to the section\r\n   * @param typesToAdd The types array\r\n   */\r\n  private addFiletypeOptionsToSection(sectionTitle: string, typesToAdd: Filetype[]) {\r\n    this.filetypeItems.push({\r\n      label: sectionTitle,\r\n      kind: vscode.QuickPickItemKind.Separator,\r\n    });\r\n\r\n    for (const type of typesToAdd) {\r\n      this.filetypeItems.push({ label: `${type.name} (${type.ext})`, type });\r\n    }\r\n  }\r\n\r\n  /**\r\n   * Remove all items that already exist in the recentFiletypes array from the given array\r\n   * @param items The array to filter\r\n   * @returns The filtered array\r\n   */\r\n  private filterOutRecentFiletypes(items: Filetype[]) {\r\n    return items.filter((item) => !this.recentFiletypes.find((recent) => recent.ext === item.ext));\r\n  }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/filetypes.manager.ts b/src/filetypes.manager.ts
+--- a/src/filetypes.manager.ts	(revision ad2807873bc58b17b8c1f0e90af544105bbcb557)
++++ b/src/filetypes.manager.ts	(date 1663136538526)
+@@ -1,7 +1,7 @@
++import * as fs from 'fs';
+ import * as vscode from 'vscode';
+ import { window } from 'vscode';
+ import { Config } from './config';
+-import { RECENT_FILE_TYPES_STATE } from './consts';
+ 
+ export interface Filetype {
+   name: string;
+@@ -20,12 +20,13 @@
+   private isFiletypeItemsDirty: boolean = false;
+ 
+   constructor() {
+-    this.recentFiletypes = Config.context.globalState.get(RECENT_FILE_TYPES_STATE) || [];
++    this.recentFiletypes = [];
+     this.mainFiletypes = [];
+     this.additionalFiletypes = [];
+     this.filetypeItems = [];
+ 
+     this.loadFiletypes();
++    this.prepareItems();
+   }
+ 
+   /**
+@@ -44,6 +45,42 @@
+     return selection.type;
+   }
+ 
++  /**
++   * Add a new filetype
++   */
++  public async newFiletype(): Promise<Filetype | undefined> {
++    const ext = await vscode.window.showInputBox({
++      placeHolder: 'Enter file extension',
++    });
++
++    if (!ext) {
++      window.showInformationMessage('Canceled...');
++    } else {
++      const existingFiletype = this.getFileType(ext);
++
++      if (existingFiletype) {
++        window.showInformationMessage(`Extension already exists (${existingFiletype.name})`);
++      } else {
++        const defaultName = this.normalizeExtension(ext).toUpperCase();
++        const name = await vscode.window.showInputBox({
++          placeHolder: `Enter filetype's name (Hit enter for '${defaultName}')`,
++        });
++
++        if (name !== undefined) {
++          const newFileType = {
++            name: name || defaultName,
++            ext: `.${this.normalizeExtension(ext)}`,
++          };
++
++          this.addTypeToRecentFiletypes(newFileType);
++          return newFileType;
++        }
++      }
++    }
++
++    return undefined;
++  }
++
+   /**
+    * Load the file types based on https://github.com/blakeembrey/language-map
+    */
+@@ -85,6 +122,16 @@
+       return newArray;
+     }, []);
+ 
++    // Load recent Filetypes
++    if (fs.existsSync(Config.recentFiletypesFilePath)) {
++      const data = fs.readFileSync(Config.recentFiletypesFilePath, 'utf8');
++      const filetypes: Filetype[] = JSON.parse(data);
++
++      for (const fileType of filetypes) {
++        this.recentFiletypes.push(fileType);
++      }
++    }
++
+     this.mainFiletypes.sort(this.filetypesCompareFn);
+     this.additionalFiletypes.sort(this.filetypesCompareFn);
+   }
+@@ -126,7 +173,7 @@
+       });
+ 
+       this.recentFiletypes.unshift(typeToAdd);
+-      Config.context.globalState.update(RECENT_FILE_TYPES_STATE, this.recentFiletypes);
++      fs.writeFileSync(Config.recentFiletypesFilePath, JSON.stringify(this.recentFiletypes, undefined, 2));
+       this.isFiletypeItemsDirty = true;
+     }
+   }
+@@ -156,4 +203,29 @@
+   private filterOutRecentFiletypes(items: Filetype[]) {
+     return items.filter((item) => !this.recentFiletypes.find((recent) => recent.ext === item.ext));
+   }
++
++  /**
++   * Returns a @Filetype object if it exists in the current list
++   * @param ext The extension of the Filetype
++   * @returns True if the extension exists in the list, otherwise false
++   */
++  private getFileType(ext: string): Filetype | undefined {
++    for (const item of this.filetypeItems) {
++      if (item.type && this.normalizeExtension(item.type.ext) === this.normalizeExtension(ext)) {
++        return item.type;
++      }
++    }
++
++    return undefined;
++  }
++
++  /**
++   * Remove the dot (if exists) and convert to lowercase.
++   * Used for comparison.
++   * @param ext The extension to normalize
++   * @returns The normalized extension
++   */
++  private normalizeExtension(ext: string): string {
++    return ext.replace('.', '').toLowerCase();
++  }
+ }

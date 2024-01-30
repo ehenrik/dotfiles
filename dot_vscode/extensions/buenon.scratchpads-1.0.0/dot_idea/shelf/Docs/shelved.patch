@@ -1,0 +1,41 @@
+Index: CHANGELOG.md
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>## 0.0.1\r\n* Initial release\r\n\r\n## 0.0.2\r\n* Increased actions timeout for high latency environments\r\n\r\n## 0.0.3\r\n* Added 'Open scratchpad' functionality\r\n\r\n## 0.0.4\r\n* Fixed [issue #2](https://github.com/buenon/scratchpads/issues/2) - command 'scratchpads.openScratchpad' not found\r\n* Fixed [issue #4](https://github.com/buenon/scratchpads/issues/4) - Extension creates 7 XML scratchpads upon install\r\n\r\n## 0.0.5\r\n* Changelog updates\r\n\r\n## 0.0.6\r\n* Dependencies update due to security vulnerabilities\r\n* Fixed [issue #7](https://github.com/buenon/scratchpads/issues/7) - Use new Global storage path\r\n\r\n## 0.0.7\r\n* Changelog updates\r\n* ***Important Note !!!***  \r\n    Prior to build 0.0.6, upgrading scratchpads will remove all previously created scratchpads.  \r\n    Assuming the old extension folder was not removed yet by vscode, you can attempt to retrieve the old scratchpads from %USERPROFILE%\\\\.vscode\\\\extensions\\\\buenon.scratchpads-<OLD_VERSION>\\\\scratchpads\\\\  \r\n    As of build 0.0.6 the new scratchpads location is %USERPROFILE%\\\\AppData\\\\Roaming\\\\Code\\\\User\\\\globalStorage\\\\buenon.scratchpads\\\\scratchpads\\\\\r\n\r\n## 0.0.8\r\n- [PR #17](https://github.com/buenon/scratchpads/pull/17) - [@omeryagmurlu](https://github.com/omeryagmurlu) - Added remove single scratchpad feature\r\n- [PR #19](https://github.com/buenon/scratchpads/pull/19) - [@nobodyme](https://github.com/nobodyme) - Create scratchpads with custom file names\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+--- a/CHANGELOG.md	(revision 69c6ea6b8943a32bc4715a102b4bfc3664c8a5a6)
++++ b/CHANGELOG.md	(date 1662215617662)
+@@ -28,3 +28,10 @@
+ ## 0.0.8
+ - [PR #17](https://github.com/buenon/scratchpads/pull/17) - [@omeryagmurlu](https://github.com/omeryagmurlu) - Added remove single scratchpad feature
+ - [PR #19](https://github.com/buenon/scratchpads/pull/19) - [@nobodyme](https://github.com/nobodyme) - Create scratchpads with custom file names
++
++## 1.0.0
++- Complete JavaScript to TypeScript refactor
++- File Types
++    - Added more file types based on [language-map](https://github.com/blakeembrey/language-map)
++    - Removed file types editing functionality
++- Will no longer close tabs
+\ No newline at end of file
+Index: README.md
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+># Scratchpads README\r\nCreate multiple scratchpad files for doodling while you're coding.\r\n\r\n## Highlights\r\n* Create multiple scratchpads\r\n* Create scratchpads of different languages and file types\r\n* Enjoy VSCode intellisense in your scratchpads\r\n* Scratchpads are not interfering your project / source control and can be removed at any time\r\n\r\n![Create new Scratchpad](https://raw.githubusercontent.com/buenon/scratchpads/master/images/scratchpad_new.gif)\r\n\r\n## Available Commands\r\n* `Scratchpads: New scratchpad` (scratchpads.newScratchpad)\r\n* `Scratchpads: Open scratchpad` (scratchpads.openScratchpad)\r\n* `Scratchpads: Remove scratchpad` (scratchpads.removeScratchpad)\r\n* `Scratchpads: Remove all scratchpads` (scratchpads.removeAllScratchpads)  \r\n  *Removing all scratchpad files loops through all the open tabs and closes the scratchpad ones before deleting the files (might seem weird)*\r\n\r\n## Keyboard Shortcuts\r\nYou can find instructions on adding shortcuts to the commands above on [VSCode website](https://code.visualstudio.com/docs/customization/keybindings).\r\n\r\n## Extension Settings\r\n\r\nThis extension contributes the following settings:\r\n\r\n* `scratchpads.promptForRemoval`: By default set to `true`. If set to `false` the user will not be prompted for confirmation when removing scratchpad files.\r\n\r\n## Source\r\n\r\n[GitHub](https://github.com/buenon/scratchpads)\r\n\r\n## License\r\n\r\n[MIT](https://raw.githubusercontent.com/buenon/scratchpads/master/LICENSE)\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/README.md b/README.md
+--- a/README.md	(revision 69c6ea6b8943a32bc4715a102b4bfc3664c8a5a6)
++++ b/README.md	(date 1662215505787)
+@@ -3,7 +3,7 @@
+ 
+ ## Highlights
+ * Create multiple scratchpads
+-* Create scratchpads of different languages and file types
++* Create scratchpads of different languages and file types (based on https://github.com/blakeembrey/language-map)
+ * Enjoy VSCode intellisense in your scratchpads
+ * Scratchpads are not interfering your project / source control and can be removed at any time
+ 

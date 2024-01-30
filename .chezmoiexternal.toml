@@ -16,3 +16,9 @@
   exact = true
   stripComponents = 1
   refreshPeriod = "168h"
+# [".hammerspoon/Spoons"]
+#  type = "archive"
+#  url = "https://github.com/miromannino/miro-windows-manager/blob/master/MiroWindowsManager.spoon.zip"
+#  exact = true
+#  stripComponents = 0
+#  refreshPeriod = "168h"

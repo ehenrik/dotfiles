@@ -1,0 +1,140 @@
+Index: src/scratchpads.manager.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import * as fs from 'fs';\r\nimport * as path from 'path';\r\nimport * as vscode from 'vscode';\r\nimport { window } from 'vscode';\r\nimport { Config } from './config';\r\nimport { CONFIG_AUTO_FORMAT, CONFIG_AUTO_PASTE, CONFIG_PROMPT_FOR_REMOVAL, FILE_NAME_TEMPLATE } from './consts';\r\nimport { FiletypesManager } from './filetypes.manager';\r\nimport Utils from './utils';\r\n\r\nexport class ScratchpadsManager {\r\n  private filetypeManager: FiletypesManager;\r\n\r\n  constructor(ftm: FiletypesManager) {\r\n    this.filetypeManager = ftm;\r\n  }\r\n\r\n  /**\r\n   * Create a new scratchpad file\r\n   * If file name exists increment counter until a new file can be created\r\n   */\r\n  public async createScratchpad() {\r\n    const filetype = await this.filetypeManager.selectFiletype();\r\n\r\n    if (filetype) {\r\n      let i = 0;\r\n\r\n      let fileNameFromUser = await window.showInputBox({ placeHolder: 'Enter a filename:' });\r\n      if (!fileNameFromUser) {\r\n        fileNameFromUser = FILE_NAME_TEMPLATE;\r\n      }\r\n\r\n      let filename = `${fileNameFromUser}${filetype.ext}`;\r\n      let fullPath = path.join(Config.projectScratchpadsPath, filename);\r\n\r\n      // Find an available filename\r\n      while (fs.existsSync(fullPath)) {\r\n        i = i + 1;\r\n        filename = `${fileNameFromUser}${i}${filetype.ext}`;\r\n        fullPath = path.join(Config.projectScratchpadsPath, filename);\r\n      }\r\n\r\n      const isAutoPaste = Config.getExtensionConfiguration(CONFIG_AUTO_PASTE);\r\n      const isAutoFormat = Config.getExtensionConfiguration(CONFIG_AUTO_FORMAT);\r\n      const data = isAutoPaste ? await vscode.env.clipboard.readText() : '';\r\n\r\n      fs.writeFileSync(fullPath, data);\r\n\r\n      const doc = await vscode.workspace.openTextDocument(fullPath);\r\n      window.showTextDocument(doc);\r\n\r\n      if (isAutoPaste && isAutoFormat) {\r\n        await this.autoFormatDoc(doc);\r\n      }\r\n    }\r\n  }\r\n\r\n  /**\r\n   * Re-open a scratchpad file\r\n   */\r\n  public async openScratchpad() {\r\n    let files = fs.readdirSync(Config.projectScratchpadsPath);\r\n\r\n    if (!files.length) {\r\n      window.showInformationMessage('No scratchpads to open');\r\n      return;\r\n    }\r\n\r\n    const selection = await window.showQuickPick(files);\r\n    if (!selection) {\r\n      return;\r\n    }\r\n\r\n    let filePath = path.join(Config.projectScratchpadsPath, selection);\r\n\r\n    if (fs.existsSync(filePath)) {\r\n      const doc = await vscode.workspace.openTextDocument(filePath);\r\n      vscode.window.showTextDocument(doc, vscode.ViewColumn.One, false);\r\n    }\r\n  }\r\n\r\n  /**\r\n   * Remove a single scratchpad file\r\n   */\r\n  public async removeScratchpad() {\r\n    let files = fs.readdirSync(Config.projectScratchpadsPath);\r\n\r\n    if (!files.length) {\r\n      window.showInformationMessage('No scratchpads to delete');\r\n      return;\r\n    }\r\n\r\n    const selection = await window.showQuickPick(files);\r\n    if (!selection) {\r\n      return;\r\n    }\r\n\r\n    let filePath = path.join(Config.projectScratchpadsPath, selection);\r\n    fs.unlinkSync(filePath);\r\n\r\n    window.showInformationMessage(`Removed ${selection}`);\r\n  }\r\n\r\n  /**\r\n   * Remove all scratchpad files\r\n   */\r\n  public async removeAllScratchpads() {\r\n    if (await this.confirmRemoval()) {\r\n      await this.closeTabs();\r\n      this.deleteScratchpadFiles();\r\n    }\r\n  }\r\n\r\n  /**\r\n   * Automatically format the text inside the given document\r\n   * @param doc the document to format\r\n   */\r\n  private async autoFormatDoc(doc: vscode.TextDocument) {\r\n    const docUri = doc.uri;\r\n    const edit = new vscode.WorkspaceEdit();\r\n    const textEdits = (await vscode.commands.executeCommand(\r\n      'vscode.executeFormatDocumentProvider',\r\n      docUri,\r\n    )) as vscode.TextEdit[];\r\n\r\n    for (const textEdit of textEdits) {\r\n      edit.replace(docUri, textEdit.range, textEdit.newText);\r\n    }\r\n\r\n    await vscode.workspace.applyEdit(edit);\r\n  }\r\n\r\n  /**\r\n   * Check if we should prompt the user for confirmation before removing scratchpads.\r\n   * If the user previously clicked on \"Always\" no need to prompt, and we can go ahead and remote them.\r\n   */\r\n  private async confirmRemoval() {\r\n    const isPromptForRemoval = Config.extensionConfig.inspect(CONFIG_PROMPT_FOR_REMOVAL)?.globalValue;\r\n\r\n    if (isPromptForRemoval === undefined || isPromptForRemoval) {\r\n      const answer = await window.showWarningMessage(\r\n        'Are you sure you want to remove all scratchpads?',\r\n        { modal: true },\r\n        'Yes',\r\n        'Always',\r\n      );\r\n\r\n      if (answer === undefined) {\r\n        return false;\r\n      }\r\n\r\n      if (answer === 'Always') {\r\n        Config.extensionConfig.update(CONFIG_PROMPT_FOR_REMOVAL, false, true);\r\n      }\r\n    }\r\n\r\n    return true;\r\n  }\r\n\r\n  /**\r\n   * Checks if the given tab is holding a scratchpad document\r\n   *\r\n   * @param {TextEditor} editor The tab to inspect\r\n   */\r\n  private isScratchpadEditor(editor?: vscode.TextEditor) {\r\n    if (editor) {\r\n      const editorPath = path.dirname(editor.document.fileName);\r\n      return editorPath === Config.projectScratchpadsPath;\r\n    }\r\n\r\n    return false;\r\n  }\r\n\r\n  /**\r\n   * Close all open tabs which edit a scratchpad document.\r\n   * Use a \"hack\" which uses workbench actions (closeActiveEditor and nextEditor)\r\n   * since there is no access to open tabs.\r\n   */\r\n  private async closeTabs() {\r\n    let initial = window.activeTextEditor;\r\n    let curr;\r\n\r\n    while (initial && this.isScratchpadEditor(initial)) {\r\n      // Started with a scratchpad tab\r\n      // Close tab until it is not longer a scratchpad tab\r\n      console.log('initial is a scratchpad: ' + initial.document.fileName);\r\n\r\n      await Utils.closeActiveEditor();\r\n      initial = window.activeTextEditor;\r\n    }\r\n\r\n    if (initial) {\r\n      console.log('initial editor: ' + initial.document.fileName);\r\n\r\n      while (initial.document !== curr?.document) {\r\n        // Iterate over open tabs and close scratchpad tabs until we're back to the initial tab\r\n        if (this.isScratchpadEditor(window.activeTextEditor)) {\r\n          await Utils.closeActiveEditor();\r\n        }\r\n\r\n        await Utils.nextEditor();\r\n\r\n        curr = window.activeTextEditor;\r\n      }\r\n\r\n      console.log('Back to initial tab. Stopping operation...');\r\n    } else {\r\n      console.log('No open tabs');\r\n    }\r\n  }\r\n\r\n  /**\r\n   * Delete the scratchpad files from the project's scratchpads folder.\r\n   */\r\n  private deleteScratchpadFiles() {\r\n    console.log('Deleting scratchpad files');\r\n\r\n    let files = fs.readdirSync(Config.projectScratchpadsPath);\r\n\r\n    for (let i = 0, len = files.length; i < len; i++) {\r\n      fs.unlinkSync(path.join(Config.projectScratchpadsPath, files[i]));\r\n    }\r\n\r\n    window.showInformationMessage('Removed all scratchpads');\r\n  }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/scratchpads.manager.ts b/src/scratchpads.manager.ts
+--- a/src/scratchpads.manager.ts	(revision c6308ee8a01c9fb8a1354341feb9e375f618d3e4)
++++ b/src/scratchpads.manager.ts	(date 1663358981301)
+@@ -3,7 +3,13 @@
+ import * as vscode from 'vscode';
+ import { window } from 'vscode';
+ import { Config } from './config';
+-import { CONFIG_AUTO_FORMAT, CONFIG_AUTO_PASTE, CONFIG_PROMPT_FOR_REMOVAL, FILE_NAME_TEMPLATE } from './consts';
++import {
++  CONFIG_AUTO_FORMAT,
++  CONFIG_AUTO_PASTE,
++  CONFIG_PROMPT_FOR_FILENAME,
++  CONFIG_PROMPT_FOR_REMOVAL,
++  FILE_NAME_TEMPLATE,
++} from './consts';
+ import { FiletypesManager } from './filetypes.manager';
+ import Utils from './utils';
+ 
+@@ -23,20 +29,25 @@
+ 
+     if (filetype) {
+       let i = 0;
++      let baseFilename = FILE_NAME_TEMPLATE;
++      const isPromptForFilename = Config.getExtensionConfiguration(CONFIG_PROMPT_FOR_FILENAME);
++
++      if (isPromptForFilename) {
++        const filenameFromUser = await window.showInputBox({ placeHolder: 'Enter a filename:' });
+ 
+-      let fileNameFromUser = await window.showInputBox({ placeHolder: 'Enter a filename:' });
+-      if (!fileNameFromUser) {
+-        fileNameFromUser = FILE_NAME_TEMPLATE;
++        if (filenameFromUser) {
++          baseFilename = filenameFromUser;
++        }
+       }
+ 
+-      let filename = `${fileNameFromUser}${filetype.ext}`;
+-      let fullPath = path.join(Config.projectScratchpadsPath, filename);
++      let finalFilename = `${baseFilename}${filetype.ext}`;
++      let fullPath = path.join(Config.projectScratchpadsPath, finalFilename);
+ 
+       // Find an available filename
+       while (fs.existsSync(fullPath)) {
+         i = i + 1;
+-        filename = `${fileNameFromUser}${i}${filetype.ext}`;
+-        fullPath = path.join(Config.projectScratchpadsPath, filename);
++        finalFilename = `${baseFilename}${i}${filetype.ext}`;
++        fullPath = path.join(Config.projectScratchpadsPath, finalFilename);
+       }
+ 
+       const isAutoPaste = Config.getExtensionConfiguration(CONFIG_AUTO_PASTE);
+@@ -134,7 +145,7 @@
+    * If the user previously clicked on "Always" no need to prompt, and we can go ahead and remote them.
+    */
+   private async confirmRemoval() {
+-    const isPromptForRemoval = Config.extensionConfig.inspect(CONFIG_PROMPT_FOR_REMOVAL)?.globalValue;
++    const isPromptForRemoval = Config.getExtensionConfiguration(CONFIG_PROMPT_FOR_REMOVAL);
+ 
+     if (isPromptForRemoval === undefined || isPromptForRemoval) {
+       const answer = await window.showWarningMessage(
+@@ -149,7 +160,7 @@
+       }
+ 
+       if (answer === 'Always') {
+-        Config.extensionConfig.update(CONFIG_PROMPT_FOR_REMOVAL, false, true);
++        Config.setExtensionConfiguration(CONFIG_PROMPT_FOR_REMOVAL, false);
+       }
+     }
+ 
+Index: src/config.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import * as vscode from 'vscode';\r\nimport { Md5 } from 'ts-md5';\r\nimport * as path from 'path';\r\nimport { SCRATCHPADS_FOLDER } from './consts';\r\n\r\nexport class Config {\r\n  public static context: vscode.ExtensionContext;\r\n  public static extensionConfig: vscode.WorkspaceConfiguration;\r\n  public static globalPath: string;\r\n  public static projectPathMD5: string;\r\n  public static scratchpadsPath: string;\r\n  public static projectScratchpadsPath: string;\r\n\r\n  public static init(context: vscode.ExtensionContext) {\r\n    this.context = context;\r\n    this.extensionConfig = vscode.workspace.getConfiguration('scratchpads');\r\n    this.projectPathMD5 = Md5.hashStr(vscode.env.appRoot);\r\n    this.globalPath = context.globalStorageUri.fsPath;\r\n    this.scratchpadsPath = path.join(this.globalPath, SCRATCHPADS_FOLDER);\r\n    this.projectScratchpadsPath = path.join(this.scratchpadsPath, this.projectPathMD5);\r\n  }\r\n\r\n  /**\r\n   * Get the extension configuration (exposed in package.json) for the given key\r\n   * @param key\r\n   */\r\n  public static getExtensionConfiguration(key: string) {\r\n    const config = this.extensionConfig.inspect(key);\r\n    return config?.globalValue !== undefined ? config.globalValue : config?.defaultValue;\r\n  }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/config.ts b/src/config.ts
+--- a/src/config.ts	(revision c6308ee8a01c9fb8a1354341feb9e375f618d3e4)
++++ b/src/config.ts	(date 1663358981285)
+@@ -28,4 +28,14 @@
+     const config = this.extensionConfig.inspect(key);
+     return config?.globalValue !== undefined ? config.globalValue : config?.defaultValue;
+   }
++
++  /**
++   * Set an extension configuration based on the given key and value.
++   * The configuration will be saved on the global target.
++   * @param key
++   * @param value
++   */
++  public static setExtensionConfiguration(key: string, value: any) {
++    this.extensionConfig.update(key, value, true);
++  }
+ }
+Index: package.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\r\n  \"name\": \"scratchpads\",\r\n  \"displayName\": \"Scratchpads\",\r\n  \"description\": \"Create multiple scratchpad files of different file types\",\r\n  \"version\": \"0.0.8\",\r\n  \"publisher\": \"buenon\",\r\n  \"author\": {\r\n    \"name\": \"Nadav Bueno\",\r\n    \"email\": \"buenonadav@gmail.com\"\r\n  },\r\n  \"license\": \"MIT\",\r\n  \"homepage\": \"https://github.com/buenon/scratchpads/blob/master/README.md\",\r\n  \"repository\": {\r\n    \"type\": \"git\",\r\n    \"url\": \"https://github.com/buenon/scratchpads\"\r\n  },\r\n  \"icon\": \"images/icon.png\",\r\n  \"engines\": {\r\n    \"vscode\": \"^1.70.0\"\r\n  },\r\n  \"categories\": [\r\n    \"Other\"\r\n  ],\r\n  \"activationEvents\": [\r\n    \"onCommand:scratchpads.newScratchpad\",\r\n    \"onCommand:scratchpads.removeScratchpad\",\r\n    \"onCommand:scratchpads.removeAllScratchpads\",\r\n    \"onCommand:scratchpads.openScratchpad\"\r\n  ],\r\n  \"main\": \"./dist/extension.js\",\r\n  \"contributes\": {\r\n    \"configuration\": {\r\n      \"type\": \"object\",\r\n      \"title\": \"Scratchpads\",\r\n      \"properties\": {\r\n        \"scratchpads.promptForRemoval\": {\r\n          \"type\": \"boolean\",\r\n          \"default\": true,\r\n          \"description\": \"Prompt the user when removing scratchpads\"\r\n        },\r\n        \"scratchpads.autoPaste\": {\r\n          \"type\": \"boolean\",\r\n          \"default\": true,\r\n          \"description\": \"Automatically paste clipboard content into the new scratchpad\"\r\n        },\r\n        \"scratchpads.autoFormat\": {\r\n          \"type\": \"boolean\",\r\n          \"default\": true,\r\n          \"description\": \"Automatically format the new scratchpad content (works only if auto paste is on)\"\r\n        }\r\n      }\r\n    },\r\n    \"commands\": [\r\n      {\r\n        \"command\": \"scratchpads.newScratchpad\",\r\n        \"title\": \"Scratchpads: New scratchpad\"\r\n      },\r\n      {\r\n        \"command\": \"scratchpads.removeScratchpad\",\r\n        \"title\": \"Scratchpads: Remove a scratchpad\"\r\n      },\r\n      {\r\n        \"command\": \"scratchpads.removeAllScratchpads\",\r\n        \"title\": \"Scratchpads: Remove all scratchpads\"\r\n      },\r\n      {\r\n        \"command\": \"scratchpads.openScratchpad\",\r\n        \"title\": \"Scratchpads: Open scratchpad\"\r\n      }\r\n    ]\r\n  },\r\n  \"scripts\": {\r\n    \"vscode:prepublish\": \"npm run package\",\r\n    \"compile\": \"webpack\",\r\n    \"watch\": \"webpack --watch\",\r\n    \"package\": \"webpack --mode production --devtool hidden-source-map\",\r\n    \"compile-tests\": \"tsc -p . --outDir out\",\r\n    \"watch-tests\": \"tsc -p . -w --outDir out\",\r\n    \"pretest\": \"npm run compile-tests && npm run compile && npm run lint\",\r\n    \"lint\": \"eslint src --ext ts\",\r\n    \"test\": \"node ./out/test/runTest.js\"\r\n  },\r\n  \"dependencies\": {\r\n    \"language-map\": \"^1.5.0\",\r\n    \"ts-md5\": \"^1.3.1\"\r\n  },\r\n  \"devDependencies\": {\r\n    \"@types/glob\": \"^7.2.0\",\r\n    \"@types/mocha\": \"^9.1.1\",\r\n    \"@types/node\": \"16.x\",\r\n    \"@types/vscode\": \"^1.70.0\",\r\n    \"@typescript-eslint/eslint-plugin\": \"^5.31.0\",\r\n    \"@typescript-eslint/parser\": \"^5.31.0\",\r\n    \"@vscode/test-electron\": \"^2.1.5\",\r\n    \"eslint\": \"^8.20.0\",\r\n    \"eslint-config-prettier\": \"^8.5.0\",\r\n    \"eslint-plugin-prettier\": \"^4.2.1\",\r\n    \"glob\": \"^8.0.3\",\r\n    \"mocha\": \"^10.0.0\",\r\n    \"prettier\": \"^2.7.1\",\r\n    \"ts-loader\": \"^9.3.1\",\r\n    \"typescript\": \"^4.7.4\",\r\n    \"webpack\": \"^5.74.0\",\r\n    \"webpack-cli\": \"^4.10.0\"\r\n  }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/package.json b/package.json
+--- a/package.json	(revision c6308ee8a01c9fb8a1354341feb9e375f618d3e4)
++++ b/package.json	(date 1663358981285)
+@@ -38,6 +38,11 @@
+           "default": true,
+           "description": "Prompt the user when removing scratchpads"
+         },
++        "scratchpads.promptForFilename": {
++          "type": "boolean",
++          "default": false,
++          "description": "Prompt the user for a file name when creating a new scratchpad"
++        },
+         "scratchpads.autoPaste": {
+           "type": "boolean",
+           "default": true,
+Index: src/consts.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>export const SCRATCHPADS_FOLDER = 'scratchpads';\r\nexport const FILE_NAME_TEMPLATE = 'scratch';\r\nexport const RECENT_FILE_TYPES_STATE = 'recentFiletypesState';\r\nexport const ACTIONS_TIMEOUT = 200; // Need to pause a bit when changing or closing the active tab\r\n\r\n// Configuration constants\r\nexport const CONFIG_PROMPT_FOR_REMOVAL = 'promptForRemoval';\r\nexport const CONFIG_AUTO_PASTE = 'autoPaste';\r\nexport const CONFIG_AUTO_FORMAT = 'autoFormat';\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/consts.ts b/src/consts.ts
+--- a/src/consts.ts	(revision c6308ee8a01c9fb8a1354341feb9e375f618d3e4)
++++ b/src/consts.ts	(date 1663358981301)
+@@ -5,5 +5,6 @@
+ 
+ // Configuration constants
+ export const CONFIG_PROMPT_FOR_REMOVAL = 'promptForRemoval';
++export const CONFIG_PROMPT_FOR_FILENAME = 'promptForFilename';
+ export const CONFIG_AUTO_PASTE = 'autoPaste';
+ export const CONFIG_AUTO_FORMAT = 'autoFormat';
