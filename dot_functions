@@ -110,3 +110,8 @@ open_tunnel() {
 check_space() {
   du -scxh $1 | sort -h
 }
+
+
+replace_last_occurence_of_character() {
+ echo $1 | rev | sed "s/$2/$3/" | rev
+}

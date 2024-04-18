@@ -11,3 +11,8 @@ Host bitbucket.org
   User e-henrik.engman@smart.com
   IdentityFile ~/.ssh/ismart
 
+
+Host code.insingulo.com
+  Hostname code.insingulo.com
+  User henrik.engman@insingulo.com
+  IdentityFile ~/.ssh/insingulo_rsa
